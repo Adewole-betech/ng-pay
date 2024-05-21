@@ -92,7 +92,7 @@ export default function Login() {
         Log in
       </button>
       <div className="flex flex-col gap-2 items-center">
-        <p className="text-neutral500 text-sm 2xl:text-base">Don't have an account?</p>
+        <p className="text-neutral500 text-sm 2xl:text-base">Don&apos;t have an account?</p>
         <Link href={"/auth/registration"} className="w-full text-primary600 font-semibold text-sm 2xl:text-base flex justify-center hover:text-primary">
           Sign up to NgPay
         </Link>
