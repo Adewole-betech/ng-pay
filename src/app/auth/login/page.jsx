@@ -1,9 +1,11 @@
 "use client";
 
+import { CustomButton } from "@/app/components/button";
+import { StyledInput, StyledPasswordInput } from "@/app/components/inputs";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { LuEye, LuEyeOff, LuRefreshCcw } from "react-icons/lu";
+import { LuRefreshCcw } from "react-icons/lu";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,34 +24,16 @@ export default function Login() {
           <label htmlFor="email" className="w-fit font-medium">
             Email address
           </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter Email"
-            className="rounded-md border 2xl:border-2 border-neutral300 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none focus-within:border-primary300 focus-within:shadow-input autofill:!bg-transparent"
-          />
+          <StyledInput id="email" type="email" placeholder="Enter Email" />
         </div>
         <div className="flex flex-col gap-1 2xl:gap-2">
           <label htmlFor="password" className="w-fit font-medium">
             Password
           </label>
-          <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral300 md:w-[28rem] focus-within:outline-none focus-within:border-primary300 focus-within:shadow-input">
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Password"
-              className="focus-within:outline-none py-[0.625rem] px-3 w-[90%] autofill:!bg-transparent rounded-s-md"
-            />
-            <div
-              onClick={() => setShowPassword(!showPassword)}
-              className="w-[10%] flex items-center justify-center hover:cursor-pointer text-neutral500"
-            >
-              {showPassword ? <LuEyeOff /> : <LuEye />}
-            </div>
-          </div>
+          <StyledPasswordInput id="password" placeholder="Enter Password" />
         </div>
         <div className="flex md:w-[28rem] gap-2">
-          <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral300 w-2/5 focus-within:outline-none focus-within:border-primary300 focus-within:shadow-input">
+          <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral-300 w-2/5 focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing">
             <input
               id="capthaBox"
               placeholder="2440"
@@ -57,16 +41,15 @@ export default function Login() {
             />
             <div
               onClick={() => {}}
-              className="w-[30%] flex items-center justify-center hover:cursor-pointer text-neutral500 text-2xl"
+              className="w-[30%] flex items-center justify-center hover:cursor-pointer text-neutral-500 text-2xl"
             >
               <LuRefreshCcw />
             </div>
           </div>
-          <input
+          <StyledInput
             id="captchaInput"
             type="text"
             placeholder="Type what you see to confirm"
-            className="rounded-md border 2xl:border-2 border-[#D1D5DB} py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none focus-within:border-primary300 focus-within:shadow-input autofill:!bg-transparent"
           />
         </div>
         <div className="flex w-full justify-between items-center">
@@ -76,24 +59,29 @@ export default function Login() {
               name="remember"
               id="remember"
               required
-              className="accent-primary w-6 h-6 rounded-xl outline-1 lg:outline-[1.5px] outline-neutral300"
+              className="accent-primary-main w-6 h-6 rounded-xl outline-1 lg:outline-[1.5px] outline-neutral-300"
             />
             <span className="">Remember me</span>
           </label>
-          <Link href="" className="text-primary600 font-semibold hover:text-primary">
+          <Link
+            href=""
+            className="text-primary-main font-semibold hover:text-primary-800"
+          >
             Forgotten your password?
           </Link>
         </div>
       </div>
-      <button
-        type="submit"
-        className="w-full bg-primary text-white py-3 px-4 rounded-md font-medium text-2xl"
-      >
+      <CustomButton type="submit" className="w-full" primary>
         Log in
-      </button>
+      </CustomButton>
       <div className="flex flex-col gap-2 items-center">
-        <p className="text-neutral500 text-sm 2xl:text-base">Don&apos;t have an account?</p>
-        <Link href={"/auth/registration"} className="w-full text-primary600 font-semibold text-sm 2xl:text-base flex justify-center hover:text-primary">
+        <p className="text-neutral-500 text-sm 2xl:text-base">
+          Don&apos;t have an account?
+        </p>
+        <Link
+          href={"/auth/registration"}
+          className="w-full text-primary-main font-semibold text-sm 2xl:text-base flex justify-center hover:text-primary-800"
+        >
           Sign up to NgPay
         </Link>
       </div>
