@@ -13,6 +13,7 @@ function StyledInput({
 }) {
   return (
     <input
+      suppressHydrationWarning={true}
       id={id}
       name={name}
       type={type}
@@ -49,6 +50,7 @@ function StyledPasswordInput({
       } ${className}`}
     >
       <input
+        suppressHydrationWarning={true}
         id={id}
         type={showPassword ? "text" : type}
         placeholder={placeholder}
@@ -79,6 +81,7 @@ function StyledSelectInput({
 }) {
   return (
     <select
+      suppressHydrationWarning={true}
       id={id}
       name={name}
       placeholder={placeholder}

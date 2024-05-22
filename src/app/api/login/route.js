@@ -9,7 +9,6 @@ export async function POST(req, res) {
     const password = md5(body?.password);
     let result = await executeQuery({
       query: `SELECT DISTINCT username FROM client_user WHERE username='${email}'`,
-      //   values: [req.body.content],
     });
     if (result.length === 0) {
       return NextResponse.json(
@@ -19,7 +18,6 @@ export async function POST(req, res) {
     } else {
       result = await executeQuery({
         query: `SELECT DISTINCT username FROM client_user WHERE username='${email}' AND password='${password}'`,
-        //   values: [req.body.content],
       });
       if (result.length === 0) {
         return NextResponse.json(
@@ -35,5 +33,3 @@ export async function POST(req, res) {
     return NextResponse.json(error);
   }
 }
-
-// export default login;

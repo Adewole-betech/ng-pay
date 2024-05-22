@@ -11,8 +11,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${Satoshi.variable} font-satoshi text-neutral-900`}>{children}</body>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={`${Satoshi.variable} font-satoshi text-neutral-900`} suppressHydrationWarning={true}>{children}</body>
     </html>
   );
 }

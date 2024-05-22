@@ -46,7 +46,6 @@ export default function Login() {
         setIsLoggedIn(true);
       })
       .catch((e) => {
-        console.log(e);
         setDataError((prevState) => ({
           ...prevState,
           ...e?.response?.data,
@@ -104,6 +103,7 @@ export default function Login() {
         <div className="flex md:w-[28rem] gap-2">
           <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral-300 w-2/5 focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing">
             <input
+              suppressHydrationWarning={true}
               id="capthaBox"
               placeholder="2440"
               className="focus-within:outline-none py-[0.625rem] px-3 w-[70%] autofill:!bg-transparent rounded-s-md"
