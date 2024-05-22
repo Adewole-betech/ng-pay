@@ -18,7 +18,7 @@ function StyledInput({
       type={type}
       disabled={disabled}
       placeholder={placeholder}
-      onChange={(e) => change(e)}
+      onChange={(e) => change && change(e)}
       className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none autofill:!bg-transparent ${
         error
           ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
@@ -54,7 +54,7 @@ function StyledPasswordInput({
         placeholder={placeholder}
         disabled={disabled}
         name={name}
-        onChange={(e) => change(e)}
+        onChange={(e) => change && change(e)}
         className={`focus-within:outline-none py-[0.625rem] px-3 w-[90%] autofill:!bg-transparent rounded-s-md ${passwordClassName} `}
       />
       <div
@@ -84,7 +84,7 @@ function StyledSelectInput({
       placeholder={placeholder}
       disabled={disabled}
       defaultValue={placeholder}
-      onChange={(e) => change(e)}
+      onChange={(e) => change && change(e)}
       className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none ${
         error
           ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
