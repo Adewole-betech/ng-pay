@@ -7,6 +7,8 @@ function StyledInput({
   name,
   placeholder,
   disabled,
+  change,
+  error,
   className,
 }) {
   return (
@@ -16,7 +18,12 @@ function StyledInput({
       type={type}
       disabled={disabled}
       placeholder={placeholder}
-      className={`rounded-md border 2xl:border-2 border-neutral-300 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing autofill:!bg-transparent ${className}`}
+      onChange={(e) => change(e)}
+      className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none autofill:!bg-transparent ${
+        error
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
+          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+      } ${className}`}
     />
   );
 }
@@ -27,13 +34,19 @@ function StyledPasswordInput({
   name,
   placeholder,
   disabled,
+  change,
+  error,
   className,
   passwordClassName,
 }) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div
-      className={`flex items-center justify-between rounded-md border 2xl:border-2 border-neutral-300 md:w-[28rem] focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing ${className}`}
+      className={`flex items-center justify-between rounded-md border 2xl:border-2 md:w-[28rem] ${
+        error
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
+          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+      } ${className}`}
     >
       <input
         id={id}
@@ -41,7 +54,8 @@ function StyledPasswordInput({
         placeholder={placeholder}
         disabled={disabled}
         name={name}
-        className={`focus-within:outline-none py-[0.625rem] px-3 w-[90%] autofill:!bg-transparent rounded-s-md ${passwordClassName}`}
+        onChange={(e) => change(e)}
+        className={`focus-within:outline-none py-[0.625rem] px-3 w-[90%] autofill:!bg-transparent rounded-s-md ${passwordClassName} `}
       />
       <div
         onClick={() => setShowPassword(!showPassword)}
@@ -58,6 +72,8 @@ function StyledSelectInput({
   name,
   placeholder,
   disabled,
+  change,
+  error,
   className,
   children,
 }) {
@@ -68,7 +84,12 @@ function StyledSelectInput({
       placeholder={placeholder}
       disabled={disabled}
       defaultValue={placeholder}
-      className={`rounded-md border 2xl:border-2 border-neutral-300 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing autofill:!bg-transparent ${className}`}
+      onChange={(e) => change(e)}
+      className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none ${
+        error
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
+          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+      } autofill:!bg-transparent ${className}`}
     >
       {children}
     </select>

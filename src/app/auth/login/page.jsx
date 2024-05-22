@@ -2,13 +2,58 @@
 
 import { CustomButton } from "@/app/components/button";
 import { StyledInput, StyledPasswordInput } from "@/app/components/inputs";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { LuRefreshCcw } from "react-icons/lu";
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [dataError, setDataError] = useState({
+    email: "",
+    password: "",
+  });
+
+  const dataInputChange = (e) => {
+    setData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    setDataError((prevState) => ({
+      ...prevState,
+      [e.target.name]: "",
+    }));
+  };
+
+  async function onSubmit() {
+    setLoading(true);
+    setIsLoggedIn(false);
+    setDataError({
+      email: "",
+      password: "",
+    });
+    axios
+      .post("/api/login", data)
+      .then((response) => {
+        setIsLoggedIn(true);
+      })
+      .catch((e) => {
+        console.log(e);
+        setDataError((prevState) => ({
+          ...prevState,
+          ...e?.response?.data,
+        }));
+      });
+    setLoading(false);
+  }
   return (
     <div className="bg-white p-6 2xl:p-8 flex flex-col items-center gap-8 rounded-xl lg:rounded-2xl">
       <div className="flex flex-col gap-6 items-center">
@@ -19,18 +64,42 @@ export default function Login() {
           Login to your account
         </p>
       </div>
+      {isLoggedIn && (
+        <div className="bg-primary-50 w-full p-4">
+          <p className="text-primary-main">{data?.email} is logged in!</p>
+        </div>
+      )}
       <div className="flex flex-col gap-5 2xl:gap-6">
         <div className="flex flex-col gap-1 2xl:gap-2">
           <label htmlFor="email" className="w-fit font-medium">
             Email address
           </label>
-          <StyledInput id="email" type="email" placeholder="Enter Email" />
+          <StyledInput
+            id="email"
+            type="email"
+            name={"email"}
+            placeholder="Enter Email"
+            error={dataError?.email}
+            change={dataInputChange}
+          />
+          {dataError?.email && (
+            <p className="text-sm text-[#EF4444]">{dataError?.email}</p>
+          )}
         </div>
         <div className="flex flex-col gap-1 2xl:gap-2">
           <label htmlFor="password" className="w-fit font-medium">
             Password
           </label>
-          <StyledPasswordInput id="password" placeholder="Enter Password" />
+          <StyledPasswordInput
+            id="password"
+            name={"password"}
+            placeholder="Enter Password"
+            error={dataError?.password}
+            change={dataInputChange}
+          />
+          {dataError?.password && (
+            <p className="text-sm text-[#EF4444]">{dataError?.password}</p>
+          )}
         </div>
         <div className="flex md:w-[28rem] gap-2">
           <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral-300 w-2/5 focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing">
@@ -71,7 +140,13 @@ export default function Login() {
           </Link>
         </div>
       </div>
-      <CustomButton type="submit" className="w-full" primary>
+      <CustomButton
+        type="submit"
+        click={onSubmit}
+        className="w-full"
+        disabled={loading}
+        primary
+      >
         Log in
       </CustomButton>
       <div className="flex flex-col gap-2 items-center">

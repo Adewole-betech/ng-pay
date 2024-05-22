@@ -48,6 +48,7 @@ module.exports = {
       },
       boxShadow: {
         primaryRing: "0px 0px 0px 4px #E1E1FE",
+        errorRing: "0px 0px 0px 4px #FEE2E2",
         xSmall: "0px 1px 2px 0px #1018280D",
         outlinedButton: "0px 0px 0px 4px #F3F4F6",
       },
