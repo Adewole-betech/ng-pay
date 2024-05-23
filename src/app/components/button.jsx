@@ -11,7 +11,7 @@ function CustomButton({
   return (
     <button
       type={type}
-      onClick={() => click()}
+      onClick={() => click && click()}
       disabled={disabled}
       className={` py-3 px-4 font-medium text-2xl rounded-md disabled:cursor-not-allowed ${
         text &&

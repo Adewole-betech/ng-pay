@@ -1,3 +1,5 @@
+"use client";
+
 import { LuEye, LuEyeOff, LuRefreshCcw } from "react-icons/lu";
 import { useState } from "react";
 
@@ -22,8 +24,8 @@ function StyledInput({
       onChange={(e) => change && change(e)}
       className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none autofill:!bg-transparent ${
         error
-          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
-          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5] border-2 2xl:border-[3px]"
+          : "focus-within:border-primary-300 focus-within:border-2 2xl:focus-within:border-[3px] focus-within:shadow-primaryRing border-neutral-300"
       } ${className}`}
     />
   );
@@ -45,8 +47,8 @@ function StyledPasswordInput({
     <div
       className={`flex items-center justify-between rounded-md border 2xl:border-2 md:w-[28rem] ${
         error
-          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
-          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5] border-2 2xl:border-[3px]"
+          : "focus-within:border-primary-300 focus-within:border-2 2xl:focus-within:border-[3px] focus-within:shadow-primaryRing border-neutral-300"
       } ${className}`}
     >
       <input
@@ -90,8 +92,8 @@ function StyledSelectInput({
       onChange={(e) => change && change(e)}
       className={`rounded-md border 2xl:border-2 py-[0.625rem] px-3 md:w-[28rem] focus-within:outline-none ${
         error
-          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5]"
-          : "focus-within:border-primary-300 focus-within:shadow-primaryRing border-neutral-300"
+          ? "focus-within:border-[#FCA5A5] focus-within:shadow-errorRing border-[#FCA5A5] border-2 2xl:border-[3px]"
+          : "focus-within:border-primary-300 focus-within:border-2 2xl:focus-within:border-[3px] focus-within:shadow-primaryRing border-neutral-300"
       } autofill:!bg-transparent ${className}`}
     >
       {children}

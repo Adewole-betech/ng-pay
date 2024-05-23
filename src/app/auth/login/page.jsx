@@ -13,13 +13,14 @@ export default function Login() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [data, setData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
   const [dataError, setDataError] = useState({
-    email: "",
+    username: "",
     password: "",
+    detail: "",
   });
 
   const dataInputChange = (e) => {
@@ -30,6 +31,7 @@ export default function Login() {
     setDataError((prevState) => ({
       ...prevState,
       [e.target.name]: "",
+      detail: "",
     }));
   };
 
@@ -37,15 +39,25 @@ export default function Login() {
     setLoading(true);
     setIsLoggedIn(false);
     setDataError({
-      email: "",
+      username: "",
       password: "",
+      detail: "",
     });
+    let authForm = new FormData();
+    authForm.append("username", data?.username);
+    authForm.append("password", data?.password);
     axios
-      .post("/api/login", data)
+      .post("http://164.68.104.15:8000/login", authForm, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
+        console.log(response);
         setIsLoggedIn(true);
       })
       .catch((e) => {
+        console.log(e);
         setDataError((prevState) => ({
           ...prevState,
           ...e?.response?.data,
@@ -68,17 +80,21 @@ export default function Login() {
           <p className="text-primary-main">{data?.email} is logged in!</p>
         </div>
       )}
+      {dataError?.detail && (
+        <div className="bg-red-50 w-full p-4 flex gap-2 justify-center">
+          <p className="text-[#EF4444]">{dataError?.detail}</p>
+        </div>
+      )}
       <div className="flex flex-col gap-5 2xl:gap-6">
         <div className="flex flex-col gap-1 2xl:gap-2">
-          <label htmlFor="email" className="w-fit font-medium">
+          <label htmlFor="username" className="w-fit font-medium">
             Email address
           </label>
           <StyledInput
-            id="email"
-            type="email"
-            name={"email"}
+            id="username"
+            name={"username"}
             placeholder="Enter Email"
-            error={dataError?.email}
+            error={dataError?.username || dataError?.detail}
             change={dataInputChange}
           />
           {dataError?.email && (
@@ -93,7 +109,7 @@ export default function Login() {
             id="password"
             name={"password"}
             placeholder="Enter Password"
-            error={dataError?.password}
+            error={dataError?.password || dataError?.detail}
             change={dataInputChange}
           />
           {dataError?.password && (
