@@ -53,11 +53,9 @@ export default function Login() {
         },
       })
       .then((response) => {
-        console.log(response);
         setIsLoggedIn(true);
       })
       .catch((e) => {
-        console.log(e);
         setDataError((prevState) => ({
           ...prevState,
           ...e?.response?.data,
