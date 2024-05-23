@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.7.2",
+    "iconsax-react": "^0.0.8",
     "md5": "^2.3.0",
     "next": "14.2.3",
     "pm2": "^5.3.1",
@@ -17,7 +18,8 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-verification-input": "^4.1.2",
-    "serverless-mysql": "^1.5.5"
+    "serverless-mysql": "^1.5.5",
+    "vuesax": "^4.0.1-alpha.25"
   },
   "devDependencies": {
     "eslint": "^8",
