@@ -2,15 +2,24 @@
 
 import { CustomButton } from "@/app/components/button";
 import { StyledInput, StyledPasswordInput } from "@/app/components/inputs";
+import { loginAuth } from "@/app/redux/features/auth/loginSlice";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuRefreshCcw } from "react-icons/lu";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const loginError = useSelector((state) => state.login.error);
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const loading = useSelector((state) => state.login.loading);
+  const user = useSelector((state) => state.login?.userLogin);
 
   const [data, setData] = useState({
     username: "",
@@ -20,7 +29,7 @@ export default function Login() {
   const [dataError, setDataError] = useState({
     username: "",
     password: "",
-    detail: "",
+    detail: loginError?.detail ? loginError?.detail : "",
   });
 
   const dataInputChange = (e) => {
@@ -35,9 +44,15 @@ export default function Login() {
     }));
   };
 
+  useEffect(() => {
+    const previousLocation = `${location?.state?.from?.pathname ?? ""}${
+      location?.state?.from?.hash ?? ""
+    }`;
+
+    isLoggedIn && navigate("/dashboard");
+  }, [isLoggedIn]);
+
   async function onSubmit() {
-    setLoading(true);
-    setIsLoggedIn(false);
     setDataError({
       username: "",
       password: "",
@@ -46,22 +61,22 @@ export default function Login() {
     let authForm = new FormData();
     authForm.append("username", data?.username);
     authForm.append("password", data?.password);
-    axios
-      .post("http://164.68.104.15:8000/login", authForm, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        setIsLoggedIn(true);
-      })
-      .catch((e) => {
-        setDataError((prevState) => ({
-          ...prevState,
-          ...e?.response?.data,
-        }));
-      });
-    setLoading(false);
+    dispatch(loginAuth(authForm));
+    // axios
+    //   .post("http://164.68.104.15:8000/login", authForm, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   .then((response) => {
+    //     setIsLoggedIn(true);
+    //   })
+    //   .catch((e) => {
+    //     setDataError((prevState) => ({
+    //       ...prevState,
+    //       ...e?.response?.data,
+    //     }));
+    //   });
   }
   return (
     <div className="bg-white p-6 2xl:p-8 flex flex-col items-center gap-8 rounded-xl lg:rounded-2xl">
