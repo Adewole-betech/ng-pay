@@ -1,6 +1,6 @@
 "use client";
 
-import { LineChart } from "@tremor/react";
+// import { LineChart } from "@tremor/react";
 import { Eye, Wallet3 } from "iconsax-react";
 import { useState } from "react";
 import { chartdata } from "./data";
@@ -18,7 +18,7 @@ const filters = [
 export default function Dashboard() {
   const [filterSet, setFilter] = useState("today");
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6">
       <div className="bg-white grid grid-cols-1 md:grid-cols-3 px-6 2xl:px-8 py-4 2xl:py-6 rounded-xl 2xl:rounded-2xl gap-5 2xl:gap-10">
         <div className="flex gap-2 p-6 rounded-lg 2xl:rounded-xl justify-between bg-right-top bg-no-repeat bg-cover bg-mesh01">
           <div className="size-10 2xl:size-12 bg-primary-50 rounded-full flex items-center justify-center text-primary-800">
@@ -101,7 +101,7 @@ export default function Dashboard() {
         <div className="border 2xl:border-2 border-neutral-200 px-6 2xl:px-8 py-4 2xl:py-6 rounded-xl 2xl:rounded-2xl flex flex-col">
           <p className="font-bold text-lg">Payment Trend</p>
           <div className="flex flex-col-reverse lg:flex-row gap-3 2xl:gap-8">
-            <LineChart
+            {/* <LineChart
               className="h-72"
               data={chartdata}
               index="date"
@@ -109,7 +109,7 @@ export default function Dashboard() {
               colors={["blue", "green"]}
               yAxisWidth={30}
               customTooltip={customTooltip}
-            />
+            /> */}
             <div className="w-full lg:w-1/4 2xl:w-1/5 flex flex-col gap-4 2xl:gap-6">
               <div className="flex flex-col">
                 <p className="text-neutral-700 text-sm 2xl:text-base">
@@ -130,7 +130,33 @@ export default function Dashboard() {
         </div>
         <div className="border 2xl:border-2 border-neutral-200 px-6 2xl:px-8 py-4 2xl:py-6 rounded-xl 2xl:rounded-2xl flex flex-col">
           <p className="font-bold text-lg">Payout Trend</p>
-          <div className="flex flex-col-reverse lg:flex-row"></div>
+          <div className="flex flex-col-reverse lg:flex-row gap-3 2xl:gap-8">
+            {/* <LineChart
+              className="h-72"
+              data={chartdata}
+              index="date"
+              categories={["Volume", "Value"]}
+              colors={["blue", "green"]}
+              yAxisWidth={30}
+              customTooltip={customTooltip}
+            /> */}
+            <div className="w-full lg:w-1/4 2xl:w-1/5 flex flex-col gap-4 2xl:gap-6">
+              <div className="flex flex-col">
+                <p className="text-neutral-700 text-sm 2xl:text-base">
+                  Total Volume
+                </p>
+                <p className="font-bold text-2xl 2xl:text-3xl">3000</p>
+              </div>
+              <div className="flex flex-col">
+                <p className="text-neutral-700 text-sm 2xl:text-base">
+                  Total Value
+                </p>
+                <p className="font-bold font-satoshi text-2xl 2xl:text-3xl">
+                  ₦2,585,000.00
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,6 @@
+"use client";
+import PropTypes from "prop-types";
+
 function CustomButton({
   type,
   className,
@@ -11,7 +14,7 @@ function CustomButton({
   return (
     <button
       type={type}
-      onClick={() => click && click()}
+      onClick={() => (click ? click() : null)}
       disabled={disabled}
       className={` py-3 px-4 font-medium text-2xl rounded-md disabled:cursor-not-allowed ${
         text &&
@@ -28,5 +31,16 @@ function CustomButton({
     </button>
   );
 }
+
+CustomButton.propTypes = {
+  type: PropTypes.string,
+  className: PropTypes.string,
+  click: PropTypes.func,
+  primary: PropTypes.bool,
+  outlined: PropTypes.bool,
+  disabled: PropTypes.bool,
+  text: PropTypes.bool,
+  children: PropTypes.node,
+};
 
 export { CustomButton };

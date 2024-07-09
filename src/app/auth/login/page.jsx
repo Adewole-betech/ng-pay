@@ -8,18 +8,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuRefreshCcw } from "react-icons/lu";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
+  // const dispatch = useDispatch();
+  // const location = useLocation();
+  // const navigate = useNavigate();
 
-  const loginError = useSelector((state) => state.login.error);
-  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const loading = useSelector((state) => state.login.loading);
-  const user = useSelector((state) => state.login?.userLogin);
+  // const loginError = useSelector((state) => state.login.error);
+  // const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  // const loading = useSelector((state) => state.login.loading);
+  // const user = useSelector((state) => state.login?.userLogin);
 
   const [data, setData] = useState({
     username: "",
@@ -29,7 +29,7 @@ export default function Login() {
   const [dataError, setDataError] = useState({
     username: "",
     password: "",
-    detail: loginError?.detail ? loginError?.detail : "",
+    // detail: loginError?.detail ? loginError?.detail : "",
   });
 
   const dataInputChange = (e) => {
@@ -44,13 +44,13 @@ export default function Login() {
     }));
   };
 
-  useEffect(() => {
-    const previousLocation = `${location?.state?.from?.pathname ?? ""}${
-      location?.state?.from?.hash ?? ""
-    }`;
+  // useEffect(() => {
+  //   const previousLocation = `${location?.state?.from?.pathname ?? ""}${
+  //     location?.state?.from?.hash ?? ""
+  //   }`;
 
-    isLoggedIn && navigate("/dashboard");
-  }, [isLoggedIn]);
+  //   isLoggedIn && navigate("/dashboard");
+  // }, [isLoggedIn]);
 
   async function onSubmit() {
     setDataError({
@@ -61,7 +61,7 @@ export default function Login() {
     let authForm = new FormData();
     authForm.append("username", data?.username);
     authForm.append("password", data?.password);
-    dispatch(loginAuth(authForm));
+    // dispatch(loginAuth(authForm));
     // axios
     //   .post("http://164.68.104.15:8000/login", authForm, {
     //     headers: {
@@ -88,11 +88,10 @@ export default function Login() {
           Login to your account
         </p>
       </div>
-      {isLoggedIn && (
-        <div className="bg-primary-50 w-full p-4">
-          <p className="text-primary-main">{data?.email} is logged in!</p>
-        </div>
-      )}
+
+      <div className="bg-primary-50 w-full p-4">
+        <p className="text-primary-main">{data?.email} is logged in!</p>
+      </div>
       {dataError?.detail && (
         <div className="bg-red-50 w-full p-4 flex gap-2 justify-center">
           <p className="text-[#EF4444]">{dataError?.detail}</p>
@@ -173,7 +172,7 @@ export default function Login() {
         type="submit"
         click={onSubmit}
         className="w-full"
-        disabled={loading}
+        // disabled={loading}
         primary
       >
         Log in

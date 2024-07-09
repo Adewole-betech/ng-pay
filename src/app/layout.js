@@ -1,8 +1,7 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
+import "@szhsin/react-menu/dist/index.css";
+import "@szhsin/react-menu/dist/transitions/slide.css";
 import { Satoshi } from "../../utils/customFonts";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "NG Pay",
