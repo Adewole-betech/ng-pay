@@ -5,6 +5,7 @@ import { RiCloseLine } from "@remixicon/react";
 import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
 import { Button, Checkbox, Space, Table, Tag, Tooltip } from "antd";
 import {
+  Add,
   ArrowLeft2,
   ArrowRight2,
   Eye,
@@ -15,7 +16,7 @@ import {
 } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
-import { exclusiveTable, exclusiveTableColumns } from "./data";
+import { linksTable, linksTableColumns } from "./data";
 import Column from "antd/es/table/Column";
 import { RxDotFilled } from "react-icons/rx";
 import dayjs from "dayjs";
@@ -41,13 +42,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
-import { setExclusiveColumns } from "@/app/redux/features/payments/exclusive";
 import Filter from "./Filter";
+import { setLinksColumns } from "@/app/redux/features/payments/links";
 
-export default function Exclusive() {
+export default function Links() {
   const dispatch = useDispatch();
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
+  const [showNewPayment, setShowNewPayment] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
@@ -60,6 +62,10 @@ export default function Exclusive() {
 
   function handleFilter() {
     setShowFilter(!showFilter);
+  }
+
+  function handleNewPayment() {
+    setShowNewPayment(!showNewPayment);
   }
 
   const itemRender = (pag, type, originalElement) => {
@@ -104,8 +110,8 @@ export default function Exclusive() {
     return originalElement;
   };
 
-  const { paymentExclusiveColumns } = useSelector(
-    () => store.getState().paymentExclusive
+  const { paymentLinksColumns } = useSelector(
+    () => store.getState().paymentLinks
   );
 
   const [dragIndex, setDragIndex] = useState({
@@ -113,8 +119,8 @@ export default function Exclusive() {
     over: -1,
   });
   const [columns, setColumns] = useState(() =>
-    paymentExclusiveColumns
-      ? paymentExclusiveColumns.map((column, i) => ({
+    paymentLinksColumns
+      ? paymentLinksColumns.map((column, i) => ({
           ...column,
           key: `${i}`,
           onHeaderCell: () => ({
@@ -124,7 +130,7 @@ export default function Exclusive() {
             id: `${i}`,
           }),
         }))
-      : exclusiveTableColumns.map((column, i) => ({
+      : linksTableColumns.map((column, i) => ({
           ...column,
           key: `${i}`,
           onHeaderCell: () => ({
@@ -169,7 +175,7 @@ export default function Exclusive() {
 
   useEffect(() => {
     if (columns) {
-      dispatch(setExclusiveColumns({ columns: columns }));
+      dispatch(setLinksColumns({ columns: columns }));
     }
   }, [columns]);
 
@@ -220,10 +226,11 @@ export default function Exclusive() {
             </CustomButton>
             <CustomButton
               primary
+              click={handleNewPayment}
               className="border 2xl:border-2 !py-2 !px-3 2xl:!py-2.5 2xl:!px-5 flex items-center gap-1.5 2xl:gap-2 text-base rounded-md lg:rounded-lg !border-primary-500 font-medium"
             >
-              <Import className="size-4 2xl:size-5" />
-              Export CSV
+              <Add className="size-4 2xl:size-5" />
+              New Payment Link
             </CustomButton>
           </div>
         </div>
@@ -285,7 +292,7 @@ export default function Exclusive() {
                 <Table
                   className="no-scrollbar"
                   bordered
-                  dataSource={exclusiveTable}
+                  dataSource={linksTable}
                   components={{
                     header: {
                       cell: TableHeaderCell,
@@ -352,6 +359,8 @@ export default function Exclusive() {
                           return (
                             <p className="font-medium uppercase">{value}</p>
                           );
+                        } else if (column?.dataIndex === "ref_id") {
+                          return <p className="uppercase">{value}</p>;
                         } else if (column?.dataIndex === "status") {
                           return (
                             <div
@@ -390,14 +399,12 @@ export default function Exclusive() {
                                   arrow
                                   placement="bottom"
                                 >
-                                  <a
-                                    href={`/dashboard/payments/history?txId=${record?.tx_id}`}
-                                  >
+                                  <a>
                                     <Eye className="text-[#374151] hover:text-primary-main hover:cursor-pointer" />
                                   </a>
                                 </Tooltip>
                                 <Tooltip
-                                  title={"Delete Account"}
+                                  title={"Delete Link"}
                                   arrow
                                   placement="bottom"
                                 >
@@ -418,16 +425,14 @@ export default function Exclusive() {
                               {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
                             </p>
                           );
-                        } else if (column?.dataIndex === "account_number") {
+                        } else if (column?.dataIndex === "order_amount") {
                           return (
-                            <div className="flex flex-col xl:gap-1">
-                              <p className="font-medium text-xs lg:text-sm">
-                                {record?.recipient_account}
-                              </p>
-                              <p className="text-xs lg:text-sm">
-                                {record?.customer}
-                              </p>
-                            </div>
+                            <p className="font-medium capitalize">
+                              ₦
+                              {parseFloat((parseFloat(value)
+                                .toFixed(2)))
+                                ?.toLocaleString("en-us")}
+                            </p>
                           );
                         } else if (column?.dataIndex === "notify_url") {
                           return (

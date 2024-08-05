@@ -16,7 +16,7 @@ function CustomButton({
       type={type}
       onClick={() => (click ? click() : null)}
       disabled={disabled}
-      className={` py-3 px-4 font-medium text-2xl rounded-md disabled:cursor-not-allowed ${
+      className={` py-3 px-4 font-medium text-2xl rounded-md disabled:cursor-not-allowed duration-300 transition-all ${
         text &&
         "text-primary-600 bg-transparent hover:text-primary-800 focus-within:text-primary-600 disabled:text-neutral-300 disabled:hover:text-neutral-300"
       }  ${

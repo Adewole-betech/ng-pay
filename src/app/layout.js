@@ -2,6 +2,9 @@ import "./globals.css";
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
 import { Satoshi } from "../../utils/customFonts";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import AllProvider from "./components/ToastContainer";
 
 export const metadata = {
   title: "NG Pay",
@@ -12,10 +15,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${Satoshi.variable} font-satoshi text-neutral-900`}
+        className={`${GeistSans.variable} ${Satoshi.variable} font-geistSans text-neutral-900`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <AllProvider>{children}</AllProvider>
       </body>
     </html>
   );

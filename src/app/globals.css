@@ -17,8 +17,13 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  font-family: var(--font-satoshi);
+  color: #111827;
+  font-family: var(--font-geist-sans);
+}
+
+.apexcharts-legend-text {
+  font-family: var(--font-geist-sans);
+  font-size: 14px;
 }
 
 @layer utilities {

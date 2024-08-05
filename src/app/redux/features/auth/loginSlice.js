@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { clearTokens, setTokens } from "./tokenSlice";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 const BASE_URL = process.env.API_BASE_URL;
 

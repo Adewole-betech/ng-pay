@@ -9,6 +9,8 @@ module.exports = {
     extend: {
       fontFamily: {
         satoshi: ["var(--font-satoshi)"],
+        geistSans: ['var(--font-geist-sans)'],
+        geistMono: ['var(--font-geist-mono)'],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
