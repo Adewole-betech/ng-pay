@@ -44,6 +44,7 @@ import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
 import Filter from "./Filter";
 import { setLinksColumns } from "@/app/redux/features/payments/links";
+import NewLink from "./components/NewLink";
 
 export default function Links() {
   const dispatch = useDispatch();
@@ -429,9 +430,9 @@ export default function Links() {
                           return (
                             <p className="font-medium capitalize">
                               ₦
-                              {parseFloat((parseFloat(value)
-                                .toFixed(2)))
-                                ?.toLocaleString("en-us")}
+                              {parseFloat(
+                                parseFloat(value).toFixed(2)
+                              )?.toLocaleString("en-us")}
                             </p>
                           );
                         } else if (column?.dataIndex === "notify_url") {
@@ -487,6 +488,7 @@ export default function Links() {
         account={accountNumber}
         setAccount={setAccountNumber}
       />
+      <NewLink show={showNewPayment} setShow={setShowNewPayment} />
     </div>
   );
 }
