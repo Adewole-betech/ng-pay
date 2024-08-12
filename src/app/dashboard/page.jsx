@@ -25,7 +25,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white grid grid-cols-1 md:grid-cols-3 px-6 2xl:px-8 py-4 2xl:py-6 rounded-xl 2xl:rounded-2xl gap-5 2xl:gap-10">
-        <div className="flex gap-2 p-3 lg:p-4 2xl:p-6 rounded-lg 2xl:rounded-xl justify-between bg-bottom bg-no-repeat bg-auto bg-mesh01">
+        <div className="flex gap-2 p-3 lg:p-4 2xl:p-6 rounded-lg 2xl:rounded-xl justify-between bg-[center_-500px] bg-no-repeat bg-auto bg-mesh01">
           <div className="flex gap-3 2xl:gap-4">
             <div className="size-8 2xl:size-12 bg-primary-50 rounded-full flex items-center justify-center text-primary-800">
               <Wallet3 variant="linear" className="size-4 2xl:size-6" />

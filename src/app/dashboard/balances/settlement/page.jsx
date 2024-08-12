@@ -3,19 +3,23 @@
 import { CustomButton } from "@/app/components/button";
 import { RiCloseLine } from "@remixicon/react";
 import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
-import { Button, Checkbox, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Checkbox, DatePicker, Space, Table, Tag, Tooltip } from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
+  Bank,
+  Briefcase,
+  Copy,
   Eye,
+  EyeSlash,
   FilterSearch,
   Import,
   Refresh,
-  Trash,
+  Wallet3,
 } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
-import { exclusiveTable, exclusiveTableColumns } from "./data";
+import { historyTable, historyTableColumns } from "./data";
 import Column from "antd/es/table/Column";
 import { RxDotFilled } from "react-icons/rx";
 import dayjs from "dayjs";
@@ -41,22 +45,30 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
-import { setExclusiveColumns } from "@/app/redux/features/payments/exclusive";
 import Filter from "./Filter";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { setBalanceSettlementColumns } from "@/app/redux/features/balance/settlement";
 
-export default function Exclusive() {
+const { RangePicker } = DatePicker;
+
+export default function Settlement() {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [showAvailable, setShowAvailable] = useState(true);
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [createdDate, setCreatedDate] = useState();
-  const [paidDate, setPaidDate] = useState();
+  const [selectedDate, setSelectedDate] = useState();
+  const [settlementID, setSettlementID] = useState("");
+  const [merchantID, setMerchantID] = useState("");
   const [status, setStatus] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [merchantId, setMerchantId] = useState("");
+  const [method, setMethod] = useState("");
 
   function handleFilter() {
     setShowFilter(!showFilter);
@@ -104,8 +116,8 @@ export default function Exclusive() {
     return originalElement;
   };
 
-  const { paymentExclusiveColumns } = useSelector(
-    () => store.getState().paymentExclusive
+  const { balanceSettlementColumns } = useSelector(
+    () => store.getState().balanceSettlement
   );
 
   const [dragIndex, setDragIndex] = useState({
@@ -113,8 +125,8 @@ export default function Exclusive() {
     over: -1,
   });
   const [columns, setColumns] = useState(() =>
-    paymentExclusiveColumns
-      ? paymentExclusiveColumns.map((column, i) => ({
+    balanceSettlementColumns
+      ? balanceSettlementColumns.map((column, i) => ({
           ...column,
           key: `${i}`,
           onHeaderCell: () => ({
@@ -124,7 +136,7 @@ export default function Exclusive() {
             id: `${i}`,
           }),
         }))
-      : exclusiveTableColumns.map((column, i) => ({
+      : historyTableColumns.map((column, i) => ({
           ...column,
           key: `${i}`,
           onHeaderCell: () => ({
@@ -169,13 +181,49 @@ export default function Exclusive() {
 
   useEffect(() => {
     if (columns) {
-      dispatch(setExclusiveColumns({ columns: columns }));
+      dispatch(setBalanceSettlementColumns({ columns: columns }));
+      router;
     }
   }, [columns]);
+
+  useEffect(() => {
+    if (searchParams.has("txId")) {
+      setSettlementID(searchParams.get("txId"));
+      router.push(pathname);
+    }
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white p-4 2xl:p-6 rounded-xl 2xl:rounded-2xl flex flex-col gap-4 2xl:gap-5 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 2xl:gap-5">
+          <div className="flex gap-2 p-3 lg:p-4 2xl:p-6 rounded-lg 2xl:rounded-xl justify-between bg-[center_-500px] bg-no-repeat bg-auto bg-mesh01 items-center">
+            <div className="flex gap-3 2xl:gap-4 items-center">
+              <div className="size-8 2xl:size-12 bg-primary-50 rounded-full flex items-center justify-center text-primary-800">
+                <Wallet3 variant="linear" className="size-4 2xl:size-6" />
+              </div>
+              <div className="flex flex-col gap-2 text-neutral-50">
+                <p className="text-sm 2xl:text-base">Total Settlements</p>
+                <p className="font-bold text-lg lg:text-xl 2xl:text-2xl font-geistSans">
+                  {showAvailable ? "₦3,000,000.00" : "*****"}
+                </p>
+              </div>
+            </div>
+            {showAvailable ? (
+              <Eye
+                onClick={() => setShowAvailable(!showAvailable)}
+                variant="linear"
+                className="size-4 2xl:size-6 text-neutral-50 hover:text-white hover:cursor-pointer"
+              />
+            ) : (
+              <EyeSlash
+                onClick={() => setShowAvailable(!showAvailable)}
+                variant="linear"
+                className="size-4 2xl:size-6  text-neutral-50 hover:text-white hover:cursor-pointer"
+              />
+            )}
+          </div>
+        </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Menu
@@ -192,14 +240,21 @@ export default function Exclusive() {
             <Menu
               value={""}
               menuButton={
-                <MenuButton className="border-r border-y py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                  <p>Status</p>
+                <MenuButton className="border-y py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
+                  <p>Settlement ID</p>
                   <FaChevronDown className="size-3 2xl:size-4 " />
                 </MenuButton>
               }
             >
-              <MenuItem disabled>Status</MenuItem>
+              <MenuItem disabled>Settlement ID</MenuItem>
             </Menu>
+            <RangePicker
+              value={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              format={"MMM D"}
+              size="large"
+              className="border-r border-y border-l-0 py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg rounded-s-none w-56 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3"
+            />
           </div>
           <div className="flex items-center gap-2 2xl:gap-3">
             <CustomButton
@@ -228,42 +283,31 @@ export default function Exclusive() {
           </div>
         </div>
         <div className="flex gap-2 lg:gap-3">
-          {status && (
+          {selectedDate && (
             <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
-              {status}{" "}
-              <RiCloseLine
-                onClick={() => setStatus("")}
-                className="text-primary-main size-6 hover:cursor-pointer"
-              />
-            </Tag>
-          )}
-          {createdDate && (
-            <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
-              {`${dayjs(createdDate[0]).format("MMM D")} - ${dayjs(
-                createdDate[1]
+              {`${dayjs(selectedDate[0]).format("MMM D")} - ${dayjs(
+                selectedDate[1]
               ).format("MMM D")}`}{" "}
               <RiCloseLine
-                onClick={() => setCreatedDate()}
+                onClick={() => setSelectedDate()}
                 className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
               />
             </Tag>
           )}
-          {paidDate && (
+          {settlementID && (
             <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
-              {`${dayjs(paidDate[0]).format("MMM D")} - ${dayjs(
-                paidDate[1]
-              ).format("MMM D")}`}{" "}
+              {settlementID}{" "}
               <RiCloseLine
-                onClick={() => setPaidDate()}
+                onClick={() => setSettlementID("")}
                 className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
               />
             </Tag>
           )}
-          {merchantId && (
+          {merchantID && (
             <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
-              {merchantId}{" "}
+              {merchantID}{" "}
               <RiCloseLine
-                onClick={() => setMerchantId("")}
+                onClick={() => setMerchantID("")}
                 className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
               />
             </Tag>
@@ -285,7 +329,7 @@ export default function Exclusive() {
                 <Table
                   className="no-scrollbar"
                   bordered
-                  dataSource={exclusiveTable}
+                  dataSource={historyTable}
                   components={{
                     header: {
                       cell: TableHeaderCell,
@@ -316,7 +360,7 @@ export default function Exclusive() {
                       <div className="flex items-center gap-3 overflow-x-auto w-full mb-4 text-nowrap">
                         {columns?.map((column) => (
                           <Checkbox
-                            key={column.dataIndex}
+                            key={column?.dataIndex}
                             checked={!column?.hidden}
                             title={column?.title}
                             onChange={(e) => {
@@ -349,26 +393,22 @@ export default function Exclusive() {
                       title={column?.title}
                       onHeaderCell={column?.onHeaderCell}
                       render={(value, record, _) => {
-                        if (column?.dataIndex === "merchant_id") {
-                          return (
-                            <p className="font-medium uppercase">{value}</p>
-                          );
-                        } else if (column?.dataIndex === "status") {
+                        if (column?.dataIndex === "status") {
                           return (
                             <div
                               className={`flex items-center rounded-s-full rounded-e-full font-medium py-1.5 pl-1.5 pr-4 capitalize w-fit ${
-                                value === "active"
+                                value === "successful"
                                   ? "bg-[#ECFDF3] text-[#027A48]"
-                                  : value === "inactive"
+                                  : value === "failed"
                                   ? "bg-[#FEF3F2] text-[#B42318]"
                                   : "bg-[#FFFAEB] text-[#B54708]"
                               }`}
                             >
                               <RxDotFilled
                                 className={`size-6 ${
-                                  value === "active"
+                                  value === "successful"
                                     ? "text-[#12B76A]"
-                                    : value === "inactive"
+                                    : value === "failed"
                                     ? "text-[#F04438]"
                                     : "text-[#F79009]"
                                 }`}
@@ -376,68 +416,26 @@ export default function Exclusive() {
                               {value}
                             </div>
                           );
+                        } else if (
+                          column?.dataIndex === "merchant_id" ||
+                          column?.dataIndex === "settlement_id"
+                        ) {
+                          return (
+                            <p className="font-medium uppercase">{value}</p>
+                          );
+                        } else if (column?.dataIndex.includes("amount")) {
+                          return (
+                            <p className="capitalize">
+                              ₦{parseFloat(value)?.toLocaleString("en-us")}
+                            </p>
+                          );
                         } else if (column?.dataIndex === "actions") {
-                          if (record?.status === "disabled") {
-                            return (
-                              <Button type="link" className="px-0">
-                                Check Status
-                              </Button>
-                            );
-                          } else {
-                            return (
-                              <Space size="middle" className="font-semibold">
-                                <Tooltip
-                                  title={"View Details"}
-                                  arrow
-                                  placement="bottom"
-                                >
-                                  <a
-                                    href={`/dashboard/payments/history?txId=${record?.tx_id}`}
-                                  >
-                                    <Eye className="text-[#374151] hover:text-primary-main hover:cursor-pointer" />
-                                  </a>
-                                </Tooltip>
-                                <Tooltip
-                                  title={"Delete Account"}
-                                  arrow
-                                  placement="bottom"
-                                >
-                                  <Trash
-                                    onClick={() => {
-                                      setSelectedPayment(record);
-                                      // setShowPayment(true);
-                                    }}
-                                    className="text-[#374151] hover:text-primary-main hover:cursor-pointer"
-                                  />
-                                </Tooltip>
-                              </Space>
-                            );
-                          }
-                        } else if (column?.dataIndex.includes("time")) {
+                          return <Button type="link">View</Button>;
+                        } else if (column?.dataIndex === "date") {
                           return (
                             <p className="capitalize">
                               {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
                             </p>
-                          );
-                        } else if (column?.dataIndex === "account_number") {
-                          return (
-                            <div className="flex flex-col xl:gap-1">
-                              <p className="font-medium text-xs lg:text-sm">
-                                {record?.recipient_account}
-                              </p>
-                              <p className="text-xs lg:text-sm">
-                                {record?.customer}
-                              </p>
-                            </div>
-                          );
-                        } else if (column?.dataIndex === "notify_url") {
-                          return (
-                            <a
-                              href={value}
-                              className="px-0 hover:text-primary-main"
-                            >
-                              {value}
-                            </a>
                           );
                         } else {
                           return <p className="capitalize">{value}</p>;
@@ -472,16 +470,16 @@ export default function Exclusive() {
       <Filter
         show={showFilter}
         setShow={setShowFilter}
-        merchantId={merchantId}
-        setMerchantId={setMerchantId}
+        txId={settlementID}
+        setTxId={setSettlementID}
+        refId={merchantID}
+        setRefId={setMerchantID}
         status={status}
         setStatus={setStatus}
-        createdDate={createdDate}
-        setCreatedDate={setCreatedDate}
-        paidDate={paidDate}
-        setPaidDate={setPaidDate}
-        account={accountNumber}
-        setAccount={setAccountNumber}
+        method={method}
+        setMethod={setMethod}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
       />
     </div>
   );

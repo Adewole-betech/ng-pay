@@ -188,7 +188,7 @@ export default function Links() {
             <Menu
               value={""}
               menuButton={
-                <MenuButton className="border 2xl:border-2 py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 rounded-s-md lg:rounded-s-lg font-medium flex items-center gap-2 2xl:gap-3">
+                <MenuButton className="border-y border-l py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 rounded-s-md lg:rounded-s-lg font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
                   <p>Merchant ID</p>
                   <FaChevronDown className="size-3 2xl:size-4 " />
                 </MenuButton>
@@ -199,7 +199,7 @@ export default function Links() {
             <Menu
               value={""}
               menuButton={
-                <MenuButton className="border-r border-y 2xl:border-r-2 2xl:border-y-2 py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3">
+                <MenuButton className="border-r border-y py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
                   <p>Status</p>
                   <FaChevronDown className="size-3 2xl:size-4 " />
                 </MenuButton>
@@ -324,6 +324,7 @@ export default function Links() {
                       <div className="flex items-center gap-3 overflow-x-auto w-full mb-4 text-nowrap">
                         {columns?.map((column) => (
                           <Checkbox
+                          key={column.dataIndex}
                             checked={!column?.hidden}
                             title={column?.title}
                             onChange={(e) => {

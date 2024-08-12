@@ -6,6 +6,9 @@ import { api } from "../api/rtkQuery";
 import historySlice from "../features/payments/history";
 import exclusiveSlice from "../features/payments/exclusive";
 import linksSlice from "../features/payments/links";
+import balanceHistorySlice from "../features/balance/history";
+import balanceSettlementSlice from "../features/balance/settlement";
+import payoutSlice from "../features/payout";
 
 const rootReducer = combineReducers({
   userData: userDataSlice.reducer,
@@ -14,6 +17,9 @@ const rootReducer = combineReducers({
   paymentHistory: historySlice.reducer,
   paymentExclusive: exclusiveSlice.reducer,
   paymentLinks: linksSlice.reducer,
+  balanceHistory: balanceHistorySlice.reducer,
+  balanceSettlement: balanceSettlementSlice.reducer,
+  payout: payoutSlice.reducer,
   [api.reducerPath]: api.reducer,
 });
 

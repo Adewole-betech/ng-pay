@@ -75,20 +75,22 @@ export default function DashboardLayout({ children }) {
     {
       icon: (
         <Wallet3
-          variant={location === "/dashboard/balances" ? "Bold" : "Outline"}
+          variant={
+            location.includes("/dashboard/balances") ? "Bold" : "Outline"
+          }
         />
       ),
       title: "Balances",
-      link: "/dashboard/balance",
+      link: "/dashboard/balances",
       desc: "",
       children: [
         {
-          link: "/dashboard/balance/history",
+          link: "/dashboard/balances/history",
           title: "Balance History",
           desc: "Get an overview of your balance history.",
         },
         {
-          link: "/dashboard/balance/settlement",
+          link: "/dashboard/balances/settlement",
           title: "Settlement History",
           desc: "Get an overview of your settlement history.",
         },
@@ -97,11 +99,11 @@ export default function DashboardLayout({ children }) {
     {
       icon: (
         <Profile2User
-          variant={location === "/dashboard/customers" ? "Bold" : "Outline"}
+          variant={location === "/dashboard/clients" ? "Bold" : "Outline"}
         />
       ),
-      title: "Customers",
-      link: "/dashboard/customers",
+      title: "Clients",
+      link: "/dashboard/clients",
       desc: "",
       children: null,
     },
