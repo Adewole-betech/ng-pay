@@ -132,16 +132,16 @@ export default function DashboardLayout({ children }) {
   ];
 
   return (
-    <div className="bg-neutral-50 md:grid md:grid-cols-12 justify-center items-center h-screen w-full absolute hidden md:relative overflow-y-auto p-6 2xl:p-10 gap-6 ">
+    <div className="bg-neutral-50 md:grid md:grid-cols-12 justify-center items-center h-screen w-full absolute hidden md:relative p-6 2xl:p-10 gap-6 ">
       <div className="flex flex-col bg-white rounded-xl 2xl:rounded-2xl pt-6 2xl:pt-12 gap-3 sticky left-0 top-0 bottom-0 h-full justify-between md:col-span-1 lg:col-span-3 2xl:col-span-2">
         <div className="flex flex-col px-2 gap-4">
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center justify-center w-full">
             <Image
               src="/images/logo.svg"
               alt="logo"
               width={30}
               height={30}
-              className="ml-16"
+              // className="ml-16"
             />
             <p className="font-bold text-3xl 2xl:text-4xl">NGPAY</p>
           </div>
@@ -207,7 +207,7 @@ export default function DashboardLayout({ children }) {
           <Login className="text-neutral-500 size-4 2xl:size-6 hover:cursor-pointer" />
         </div>
       </div>
-      <div className="flex w-full flex-col gap-6 h-full md:col-span-11 lg:col-span-9 2xl:col-span-10">
+      <div className="flex w-full flex-col gap-6 h-full relative top-0 bottom-0 right-0 md:col-span-11 lg:col-span-9 2xl:col-span-10 overflow-y-hidden">
         <div className="bg-white flex items-center px-6 2xl:px-7 py-4 2xl:py-5 rounded-xl 2xl:rounded-2xl justify-between">
           <div className="flex flex-col gap-2 2xl:gap-3">
             {paths

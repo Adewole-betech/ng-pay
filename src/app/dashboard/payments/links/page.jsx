@@ -324,7 +324,7 @@ export default function Links() {
                       <div className="flex items-center gap-3 overflow-x-auto w-full mb-4 text-nowrap">
                         {columns?.map((column) => (
                           <Checkbox
-                          key={column.dataIndex}
+                            key={column.dataIndex}
                             checked={!column?.hidden}
                             title={column?.title}
                             onChange={(e) => {

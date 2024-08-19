@@ -8,7 +8,7 @@ const NewLink = ({ show, setShow }) => {
       <div className="flex flex-col w-96 md:w-[28rem] lg:w-[30.5rem]">
         <div className="flex items-center justify-between border-b border-b-[#EAECF0] py-3 lg:py-4 px-4 lg:px-5 2xl:px-6">
           <p className="font-bold text-lg md:text-xl lg:text-2xl capitalize">
-            Filter
+            New Payment Link
           </p>
           <HiMiniXMark
             onClick={() => setShow(!show)}

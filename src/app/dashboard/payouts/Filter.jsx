@@ -1,4 +1,3 @@
-
 import RightModal from "@/app/components/RightModal";
 import { HiMiniXMark } from "react-icons/hi2";
 import { Button, DatePicker, Input, Select } from "antd";
@@ -14,13 +13,10 @@ const Filter = ({
   setRefId,
   status,
   setStatus,
-  method,
-  setMethod,
   selectedDate,
   setSelectedDate,
 }) => {
   function clearFilters() {
-    setMethod("");
     setRefId("");
     setSelectedDate();
     setStatus("");
@@ -42,7 +38,7 @@ const Filter = ({
         <div className="flex flex-col gap-3 lg:gap-4 2xl:gap-6 px-4 lg:px-6">
           <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="date" className="w-fit font-medium">
-              Create Date
+              Date
             </label>
             <DatePicker.RangePicker
               value={selectedDate}
@@ -100,25 +96,6 @@ const Filter = ({
                 { label: "Successful", value: "successful" },
                 { label: "Failed", value: "failed" },
                 { label: "Pending", value: "pending" },
-              ]}
-            />
-          </div>
-          <div className="flex flex-col gap-1 2xl:gap-2">
-            <label htmlFor="method" className="w-fit font-medium">
-              Payment Method
-            </label>
-            <Select
-              value={method}
-              onSearch={(e) => setMethod(e)}
-              id="method"
-              placeholder="Enter ID"
-              size="large"
-              allowClear
-              showSearch
-              options={[
-                { label: "Cash Deposit", value: "cash deposit" },
-                { label: "Bank Transfer", value: "bank transfer" },
-                { label: "Card Payment", value: "card payment" },
               ]}
             />
           </div>

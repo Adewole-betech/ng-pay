@@ -19,6 +19,7 @@
 body {
   color: #111827;
   font-family: var(--font-geist-sans);
+  height: 100vh;
 }
 
 .apexcharts-legend-text {
@@ -39,4 +40,21 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+span.ant-steps-icon {
+  display: block;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+div.ant-steps.ant-steps-vertical div.ant-steps-item-tail {
+  inset-inline-start: 20px !important;
+}
+
+div.ant-steps.ant-steps-vertical div.ant-steps-item-tail::after {
+  width: 2px !important;
+}
+input.ant-input.ant-otp-input {
+  font-size: 42px !important;
 }

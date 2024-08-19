@@ -119,8 +119,8 @@ export default function Dashboard() {
           )}
         </div>
       </div>
-      <div className="flex bg-white rounded-xl 2xl:rounded-2xl overflow-y-auto no-scrollbar px-6 2xl:px-8 py-4 2xl:py-6">
-        <div className="flex flex-col gap-4 2xl:gap-8 w-full pb-4 2xl:pb-6">
+      <div className="flex bg-white rounded-xl 2xl:rounded-2xl px-6 2xl:px-8 py-4 2xl:py-6 h-full">
+        <div className="flex flex-col gap-4 2xl:gap-8 w-full overflow-y-auto no-scrollbar h-full">
           <div className="flex items-center">
             {filters?.map((filter, ind) => (
               <div
@@ -312,7 +312,7 @@ export default function Dashboard() {
                     />
                   </div>
                 </Spin>
-                <div id="html-dist"></div>
+                {/* <div id="html-dist"></div> */}
               </div>
               <div className="w-full lg:w-1/4 2xl:w-1/5 flex flex-col gap-4 2xl:gap-6">
                 <div className="flex flex-col">
