@@ -104,7 +104,7 @@ export default function DashboardLayout({ children }) {
       ),
       title: "Clients",
       link: "/dashboard/clients",
-      desc: "",
+      desc: "Manage your client here",
       children: null,
     },
     {
