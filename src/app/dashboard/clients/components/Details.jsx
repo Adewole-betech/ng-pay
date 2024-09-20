@@ -27,7 +27,7 @@ const Details = ({ selectedClient }) => {
               },
             ]}
           >
-            <Input placeholder="NG12345" className="w-full" />
+            <Input size="large" placeholder="NG12345" className="w-full" />
           </Form.Item>
           <Form.Item
             label="Client Name"
@@ -39,7 +39,7 @@ const Details = ({ selectedClient }) => {
               },
             ]}
           >
-            <Input placeholder="Enter name" className="w-full" />
+            <Input size="large" placeholder="Enter name" className="w-full" />
           </Form.Item>
           <Form.Item
             label="Role"
@@ -52,6 +52,7 @@ const Details = ({ selectedClient }) => {
             ]}
           >
             <Select
+              size="large"
               placeholder="Select client role"
               className="w-full"
               options={[
@@ -71,6 +72,7 @@ const Details = ({ selectedClient }) => {
             ]}
           >
             <Select
+              size="large"
               placeholder="Select merchant type"
               className="w-full"
               options={[
@@ -91,6 +93,7 @@ const Details = ({ selectedClient }) => {
             ]}
           >
             <Select
+              size="large"
               placeholder="Select status"
               className="w-full"
               options={[
@@ -106,6 +109,7 @@ const Details = ({ selectedClient }) => {
               className="w-full"
               autoSize={{ maxRows: 3, minRows: 3 }}
               maxLength={200}
+              size="large"
               showCount={(val, count, maxLength) => {
                 console.log(maxLength, count, val);
                 return (

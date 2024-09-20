@@ -10,6 +10,7 @@ import balanceHistorySlice from "../features/balance/history";
 import balanceSettlementSlice from "../features/balance/settlement";
 import payoutSlice from "../features/payout";
 import clientSlice from "../features/clients";
+import teamsSlice from "../features/settings/teams";
 
 const rootReducer = combineReducers({
   userData: userDataSlice.reducer,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   balanceSettlement: balanceSettlementSlice.reducer,
   payout: payoutSlice.reducer,
   client: clientSlice.reducer,
+  teams: teamsSlice.reducer,
   [api.reducerPath]: api.reducer,
 });
 

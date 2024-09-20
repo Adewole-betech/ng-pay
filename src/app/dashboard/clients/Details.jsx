@@ -3,6 +3,9 @@
 import { Tabs } from "antd";
 import { useState } from "react";
 import Details from "./components/Details";
+import Payin from "./components/Payin";
+import Password from "./components/Password";
+import Payout from "./components/Payout";
 
 const ClientDetails = ({
   selectedClient,
@@ -23,6 +26,9 @@ const ClientDetails = ({
         ]}
       />
       {tab === "details" && <Details selectedClient={selectedClient} />}
+      {tab === "payin" && <Payin selectedClient={selectedClient} />}
+      {tab === "payout" && <Payout selectedClient={selectedClient} />}
+      {tab === "reset" && <Password selectedClient={selectedClient} />}
     </>
   );
 };

@@ -109,17 +109,6 @@ export default function DashboardLayout({ children }) {
     },
     {
       icon: (
-        <Profile2User
-          variant={location === "/dashboard/teams" ? "Bold" : "Outline"}
-        />
-      ),
-      title: "Teams",
-      link: "/dashboard/teams",
-      desc: "Invite your team members here.",
-      children: null,
-    },
-    {
-      icon: (
         <Setting2
           variant={location === "/dashboard/settings" ? "Bold" : "Outline"}
         />

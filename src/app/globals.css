@@ -58,3 +58,9 @@ div.ant-steps.ant-steps-vertical div.ant-steps-item-tail::after {
 input.ant-input.ant-otp-input {
   font-size: 42px !important;
 }
+
+div.ant-select-dropdown,
+div.ant-picker-dropdown,
+.szh-menu-container {
+  z-index: 10001;
+}
