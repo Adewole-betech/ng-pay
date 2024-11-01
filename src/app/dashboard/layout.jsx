@@ -15,11 +15,18 @@ import {
 } from "iconsax-react";
 import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, Badge } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/features/auth/loginSlice";
+import { toast } from "react-toastify";
+import store from "../redux/store/store";
 
 export default function DashboardLayout({ children }) {
   const location = usePathname();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { isLoggedIn } = useSelector(() => store.getState().login);
   const [child, setChild] = useState(null);
 
   const paths = [
@@ -120,7 +127,7 @@ export default function DashboardLayout({ children }) {
     },
   ];
 
-  return (
+  return isLoggedIn ? (
     <div className="bg-neutral-50 md:grid md:grid-cols-12 justify-center items-center h-screen w-full absolute hidden md:relative p-6 2xl:p-10 gap-6 ">
       <div className="flex flex-col bg-white rounded-xl 2xl:rounded-2xl pt-6 2xl:pt-12 gap-3 sticky left-0 top-0 bottom-0 h-full justify-between md:col-span-1 lg:col-span-3 2xl:col-span-2">
         <div className="flex flex-col px-2 gap-4">
@@ -193,7 +200,14 @@ export default function DashboardLayout({ children }) {
               </p>
             </div>
           </div>
-          <Login className="text-neutral-500 size-4 2xl:size-6 hover:cursor-pointer" />
+          <Login
+            onClick={() => {
+              toast.error("Logged out!");
+              dispatch(logout());
+              router.push("/auth/login");
+            }}
+            className="text-neutral-500 size-4 2xl:size-6 hover:cursor-pointer"
+          />
         </div>
       </div>
       <div className="flex w-full flex-col gap-6 h-full relative top-0 bottom-0 right-0 md:col-span-11 lg:col-span-9 2xl:col-span-10 overflow-y-hidden">
@@ -241,5 +255,7 @@ export default function DashboardLayout({ children }) {
         <div className="h-full overflow-y-auto no-scrollbar">{children}</div>
       </div>
     </div>
+  ) : (
+    router.push("/auth/login")
   );
 }

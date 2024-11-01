@@ -2,84 +2,55 @@
 
 import { CustomButton } from "@/app/components/button";
 import { StyledInput, StyledPasswordInput } from "@/app/components/inputs";
-import { loginAuth } from "@/app/redux/features/auth/loginSlice";
-import axios from "axios";
+import { loginAuth, resetError } from "@/app/redux/features/auth/loginSlice";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuRefreshCcw } from "react-icons/lu";
-// import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useNavigationContext } from "@/app/contexts";
+import { Button, Form, Input } from "antd";
+import store from "@/app/redux/store/store";
 
 export default function Login() {
-  // const dispatch = useDispatch();
-  // const location = useLocation();
-  // const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { previousRoute } = useNavigationContext();
 
-  // const loginError = useSelector((state) => state.login.error);
-  // const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  // const loading = useSelector((state) => state.login.loading);
-  // const user = useSelector((state) => state.login?.userLogin);
+  const { loading, isLoggedIn, userLogin, error } = useSelector(
+    () => store.getState().login
+  );
 
   const [data, setData] = useState({
     username: "",
     password: "",
   });
 
-  const [dataError, setDataError] = useState({
-    username: "",
-    password: "",
-    // detail: loginError?.detail ? loginError?.detail : "",
-  });
-
   const dataInputChange = (e) => {
+    dispatch(resetError());
     setData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    setDataError((prevState) => ({
-      ...prevState,
-      [e.target.name]: "",
-      detail: "",
-    }));
   };
 
-  // useEffect(() => {
-  //   const previousLocation = `${location?.state?.from?.pathname ?? ""}${
-  //     location?.state?.from?.hash ?? ""
-  //   }`;
-
-  //   isLoggedIn && navigate("/dashboard");
-  // }, [isLoggedIn]);
+  useEffect(() => {
+    isLoggedIn && router.push(previousRoute ?? "/dashboard");
+  }, [isLoggedIn]);
 
   async function onSubmit() {
-    setDataError({
-      username: "",
-      password: "",
-      detail: "",
-    });
     let authForm = new FormData();
     authForm.append("username", data?.username);
     authForm.append("password", data?.password);
-    // dispatch(loginAuth(authForm));
-    // axios
-    //   .post("http://164.68.104.15:8000/login", authForm, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((response) => {
-    //     setIsLoggedIn(true);
-    //   })
-    //   .catch((e) => {
-    //     setDataError((prevState) => ({
-    //       ...prevState,
-    //       ...e?.response?.data,
-    //     }));
-    //   });
+    dispatch(loginAuth(authForm));
   }
   return (
-    <div className="bg-white p-6 2xl:p-8 flex flex-col items-center gap-8 rounded-xl lg:rounded-2xl">
+    <Form
+      onFinish={onSubmit}
+
+      className="bg-white p-6 2xl:p-8 flex flex-col items-center gap-8 rounded-xl lg:rounded-2xl"
+    >
       <div className="flex flex-col gap-6 items-center">
         <div className="flex w-fit">
           <Image src="/images/logo.svg" alt="logo" width={50} height={50} />
@@ -88,64 +59,63 @@ export default function Login() {
           Login to your account
         </p>
       </div>
-
-      <div className="bg-primary-50 w-full p-4">
-        <p className="text-primary-main">{data?.email} is logged in!</p>
-      </div>
-      {dataError?.detail && (
-        <div className="bg-red-50 w-full p-4 flex gap-2 justify-center">
-          <p className="text-[#EF4444]">{dataError?.detail}</p>
-        </div>
-      )}
       <div className="flex flex-col gap-5 2xl:gap-6">
         <div className="flex flex-col gap-1 2xl:gap-2">
           <label htmlFor="username" className="w-fit font-medium">
             Email address
           </label>
-          <StyledInput
+          <Input
+            size="large"
             id="username"
             name={"username"}
             placeholder="Enter Email"
-            error={dataError?.username || dataError?.detail}
-            change={dataInputChange}
+            onChange={dataInputChange}
+            status={error?.username && "error"}
+            required
           />
-          {dataError?.email && (
-            <p className="text-sm text-[#EF4444]">{dataError?.email}</p>
+          {error?.username && (
+            <p className="text-sm text-[#EF4444]">{error?.username[0]}</p>
           )}
         </div>
         <div className="flex flex-col gap-1 2xl:gap-2">
           <label htmlFor="password" className="w-fit font-medium">
             Password
           </label>
-          <StyledPasswordInput
+          <Input.Password
+            size="large"
             id="password"
             name={"password"}
             placeholder="Enter Password"
-            error={dataError?.password || dataError?.detail}
-            change={dataInputChange}
+            onChange={dataInputChange}
+            required
+            status={error?.password && "error"}
           />
-          {dataError?.password && (
-            <p className="text-sm text-[#EF4444]">{dataError?.password}</p>
+          {error?.password && (
+            <p className="text-sm text-[#EF4444]">{error?.password[0]}</p>
           )}
         </div>
         <div className="flex md:w-[28rem] gap-2">
-          <div className="flex items-center justify-between rounded-md border 2xl:border-2 border-neutral-300 w-2/5 focus-within:outline-none focus-within:border-primary-300 focus-within:shadow-primaryRing">
-            <input
+          <div className="flex items-center justify-between">
+            <Input
+              addonBefore={
+                <div
+                  onClick={() => {}}
+                  className="flex items-center justify-center hover:cursor-pointer text-neutral-500 text-2xl"
+                >
+                  <LuRefreshCcw />
+                </div>
+              }
+              size="large"
               suppressHydrationWarning={true}
               id="capthaBox"
               placeholder="2440"
-              className="focus-within:outline-none py-[0.625rem] px-3 w-[70%] autofill:!bg-transparent rounded-s-md"
+              className="w-full"
             />
-            <div
-              onClick={() => {}}
-              className="w-[30%] flex items-center justify-center hover:cursor-pointer text-neutral-500 text-2xl"
-            >
-              <LuRefreshCcw />
-            </div>
           </div>
-          <StyledInput
+          <Input
+            size="large"
             id="captchaInput"
-            type="text"
+            name="captchaInput"
             placeholder="Type what you see to confirm"
           />
         </div>
@@ -168,15 +138,16 @@ export default function Login() {
           </Link>
         </div>
       </div>
-      <CustomButton
-        type="submit"
-        click={onSubmit}
+      <Button
+        type="primary"
+        htmlType="submit"
+        size="large"
         className="w-full"
-        // disabled={loading}
+        loading={loading}
         primary
       >
         Log in
-      </CustomButton>
+      </Button>
       <div className="flex flex-col gap-2 items-center">
         <p className="text-neutral-500 text-sm 2xl:text-base">
           Don&apos;t have an account?
@@ -188,6 +159,6 @@ export default function Login() {
           Sign up to NgPay
         </Link>
       </div>
-    </div>
+    </Form>
   );
 }

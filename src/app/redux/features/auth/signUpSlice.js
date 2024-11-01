@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const BASE_URL = process.env.API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const initialState = {
   signUp: null,
@@ -20,7 +20,7 @@ export const fetchSignUp = createAsyncThunk(
   "signUp/fetchSignUp",
   async ({ data }) => {
     return axios
-      .post(`${BASE_URL}/Registration/`, data, {
+      .post(`${BASE_URL}/api/client-user/`, data, {
         headers: {
           'content-type': 'multipart/form-data'
         },

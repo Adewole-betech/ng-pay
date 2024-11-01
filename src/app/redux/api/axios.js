@@ -2,7 +2,7 @@ import axios from "axios";
 import { setTokens, clearTokens } from "../features/auth/tokenSlice";
 import { logout } from "../features/auth/loginSlice";
 
-const BASE_URL = process.env.API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const axiosAuth = axios.create({
   baseURL: BASE_URL,
@@ -31,7 +31,7 @@ export const createAuthInterceptor = (instance, store) => {
         originalRequest._retry = true;
         try {
           const refreshResponse = await axios.post(
-            `${BASE_URL}/refresh/`,
+            `${BASE_URL}/api/client-user/token/refresh/`,
             {
               refresh: refreshToken,
             },

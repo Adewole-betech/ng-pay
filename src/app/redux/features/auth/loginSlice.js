@@ -3,7 +3,7 @@ import axios from "axios";
 import { clearTokens, setTokens } from "./tokenSlice";
 import { toast } from "react-toastify";
 
-const BASE_URL = process.env.API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const initialState = {
   loading: false,
@@ -17,7 +17,7 @@ export const loginAuth = createAsyncThunk(
   "login/loginAuth",
   async (data, { dispatch }) => {
     return axios
-      .post(`${BASE_URL}/login/`, data, {
+      .post(`${BASE_URL}/api/client-user/Login/`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -40,45 +40,63 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.isLoggedIn = false;
-      state.userLogin = null;
-      // dispatch(
       clearTokens();
-      // )
+
+      return {
+        ...state,
+        isLoggedIn: false,
+        userLogin: null,
+      };
     },
     resetError: (state) => {
-      state.error = null;
-      state.loading = false;
+      return {
+        ...state,
+        error: null,
+        loading: false,
+      };
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loginAuth.pending, (state) => {
-      state.loading = true;
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
     });
     builder.addCase(loginAuth.fulfilled, (state, action) => {
-      state.loading = false;
-      console.log(action.payload);
 
       if (action.payload.access_token) {
-        state.success = true;
-        state.userLogin = action.payload;
-        state.isLoggedIn = true;
-        state.error = null;
         toast.success("Login successful");
+        return {
+          ...state,
+          loading: false,
+          success: true,
+          userLogin: action.payload,
+          isLoggedIn: true,
+          error: null,
+        };
       } else {
-        state.success = false;
-        state.userLogin = null;
-        state.isLoggedIn = false;
-        state.error = action.payload;
+        return {
+          ...state,
+          loading: false,
+          success: false,
+          userLogin: null,
+          isLoggedIn: false,
+          error: action.payload,
+        };
       }
     });
     builder.addCase(loginAuth.rejected, (state, action) => {
-      state.loading = false;
-      state.success = false;
-      state.userLogin = null;
-      state.isLoggedIn = false;
-      state.error = "sysError";
-      toast.error("Network error, refresh and try again.");
+      toast.error(action.error.message);
+      return {
+        ...state,
+        loading: false,
+        success: false,
+        userLogin: null,
+        isLoggedIn: false,
+        error: action.error?.message,
+      };
     });
   },
 });

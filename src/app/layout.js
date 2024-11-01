@@ -5,6 +5,7 @@ import { Satoshi } from "../../utils/customFonts";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import AllProvider from "./components/ToastContainer";
+import { NavigationProvider } from "./contexts";
 
 export const metadata = {
   title: "NG Pay",
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
         className={`${GeistSans.variable} ${Satoshi.variable} font-geistSans text-neutral-900`}
         suppressHydrationWarning={true}
       >
-        <AllProvider>{children}</AllProvider>
+        <AllProvider>
+          <NavigationProvider>{children}</NavigationProvider>
+        </AllProvider>
       </body>
     </html>
   );
