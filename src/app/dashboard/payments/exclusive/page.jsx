@@ -2,8 +2,8 @@
 
 import { CustomButton } from "@/app/components/button";
 import { RiCloseLine } from "@remixicon/react";
-import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
-import { Button, Checkbox, Space, Table, Tag, Tooltip } from "antd";
+import { FocusableItem, Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
+import { Button, Checkbox, Input, Space, Table, Tag, Tooltip } from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
@@ -11,6 +11,7 @@ import {
   FilterSearch,
   Import,
   Refresh,
+  SearchNormal1,
   Trash,
 } from "iconsax-react";
 import { useEffect, useState } from "react";
@@ -41,7 +42,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
-import { setExclusiveColumns } from "@/app/redux/features/payments/exclusive";
+import {
+  getPaymentsExclusive,
+  setExclusiveColumns,
+} from "@/app/redux/features/payments/exclusive";
 import Filter from "./Filter";
 
 export default function Exclusive() {
@@ -49,17 +53,47 @@ export default function Exclusive() {
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [createdDate, setCreatedDate] = useState();
-  const [paidDate, setPaidDate] = useState();
+  const [createdDate, setCreatedDate] = useState(["", ""]);
+  const [paidDate, setPaidDate] = useState(["", ""]);
   const [status, setStatus] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [merchantId, setMerchantId] = useState("");
 
+  let timeoutId;
+
+  const { paymentExclusiveColumns, exclusiveLoading, exclusivePayments } =
+    useSelector(() => store.getState().paymentExclusive);
+
   function handleFilter() {
     setShowFilter(!showFilter);
+  }
+
+  function loadData() {
+    dispatch(
+      getPaymentsExclusive({
+        page: page,
+        page_size: size,
+        start_date: createdDate[0]
+          ? dayjs(createdDate[0]).format("YYYY-MM-DD")
+          : "",
+        end_date: createdDate[1]
+          ? dayjs(createdDate[1]).format("YYYY-MM-DD")
+          : "",
+        start_paid_date: paidDate[0]
+          ? dayjs(paidDate[0]).format("YYYY-MM-DD")
+          : "",
+        end_paid_date: paidDate[1]
+          ? dayjs(paidDate[1]).format("YYYY-MM-DD")
+          : "",
+        status: status,
+        accountnumber: accountNumber,
+        mchid: merchantId,
+      })
+    );
   }
 
   const itemRender = (pag, type, originalElement) => {
@@ -68,7 +102,7 @@ export default function Exclusive() {
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={loading}
+          loading={exclusiveLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
@@ -82,7 +116,7 @@ export default function Exclusive() {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={loading}
+          loading={exclusiveLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
@@ -103,10 +137,6 @@ export default function Exclusive() {
     }
     return originalElement;
   };
-
-  const { paymentExclusiveColumns } = useSelector(
-    () => store.getState().paymentExclusive
-  );
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -173,6 +203,17 @@ export default function Exclusive() {
     }
   }, [columns]);
 
+  useEffect(() => {
+    if (exclusivePayments) {
+      setTotal(exclusivePayments?.count);
+      setHistoryData(exclusivePayments?.results);
+    }
+  }, [exclusivePayments]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size, createdDate, paidDate, status, merchantId, accountNumber]);
+
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white p-4 2xl:p-6 rounded-xl 2xl:rounded-2xl flex flex-col gap-4 2xl:gap-5 h-full">
@@ -180,31 +221,62 @@ export default function Exclusive() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Menu
-                value={""}
+                value={merchantId}
+                onItemClick={(e) => setMerchantId(e?.value)}
                 menuButton={
                   <MenuButton className="border-y border-l py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 rounded-s-md lg:rounded-s-lg font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Merchant ID</p>
+                    <p>{merchantId ? merchantId : "Merchant ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Merchant ID"
+                      value={merchantId}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setMerchantId(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
                 <MenuItem disabled>Merchant ID</MenuItem>
+                {historyData?.map((hist) => (
+                  <MenuItem
+                    key={hist?.id}
+                    value={hist?.mchid}
+                    className={"uppercase"}
+                  >
+                    {hist?.mchid}
+                  </MenuItem>
+                ))}
               </Menu>
               <Menu
-                value={""}
+                value={status}
+                onItemClick={(e) => setStatus(e?.value)}
                 menuButton={
                   <MenuButton className="border-r border-y py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Status</p>
+                    <p className="capitalize">{status ? status : "Status"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
-                <MenuItem disabled>Status</MenuItem>
+                <MenuItem value="settled">Settled</MenuItem>
+                <MenuItem value={"successful"}>Successful</MenuItem>
+                <MenuItem value={"failed"}>Failed</MenuItem>
               </Menu>
             </div>
             <div className="flex items-center gap-2 2xl:gap-3">
               <CustomButton
                 outlined
+                click={loadData}
                 className="border !py-2 !px-3 2xl:!py-2.5 2xl:!px-5 flex items-center gap-1.5 2xl:gap-2 text-base rounded-md lg:rounded-lg !border-neutral-200 font-medium"
               >
                 <Refresh className="size-4 2xl:size-5" />
@@ -238,24 +310,24 @@ export default function Exclusive() {
                 />
               </Tag>
             )}
-            {createdDate && (
+            {createdDate && createdDate[0] !== "" && (
               <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
                 {`${dayjs(createdDate[0]).format("MMM D")} - ${dayjs(
                   createdDate[1]
                 ).format("MMM D")}`}{" "}
                 <RiCloseLine
-                  onClick={() => setCreatedDate()}
+                  onClick={() => setCreatedDate(["", ""])}
                   className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
                 />
               </Tag>
             )}
-            {paidDate && (
+            {paidDate && paidDate[0] !== "" && (
               <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
                 {`${dayjs(paidDate[0]).format("MMM D")} - ${dayjs(
                   paidDate[1]
                 ).format("MMM D")}`}{" "}
                 <RiCloseLine
-                  onClick={() => setPaidDate()}
+                  onClick={() => setPaidDate(["", ""])}
                   className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
                 />
               </Tag>
@@ -286,7 +358,7 @@ export default function Exclusive() {
                   <Table
                     className="no-scrollbar"
                     bordered
-                    dataSource={exclusiveTable}
+                    dataSource={historyData}
                     components={{
                       header: {
                         cell: TableHeaderCell,
@@ -299,7 +371,7 @@ export default function Exclusive() {
                     scroll={{
                       y: 800,
                     }}
-                    // loading={loading}
+                    loading={exclusiveLoading}
                     pagination={{
                       pageSize: size,
                       itemRender: itemRender,
@@ -393,7 +465,7 @@ export default function Exclusive() {
                                     placement="bottom"
                                   >
                                     <a
-                                      href={`/dashboard/payments/history?txId=${record?.tx_id}`}
+                                      href={`/dashboard/payments/history?txId=${record?.merchant}`}
                                     >
                                       <Eye className="text-[#374151] hover:text-primary-main hover:cursor-pointer" />
                                     </a>
@@ -420,18 +492,18 @@ export default function Exclusive() {
                                 {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
                               </p>
                             );
-                          } else if (column?.dataIndex === "account_number") {
+                          } else if (column?.dataIndex === "accountnumber") {
                             return (
                               <div className="flex flex-col xl:gap-1">
                                 <p className="font-medium text-xs lg:text-sm">
-                                  {record?.recipient_account}
+                                  {record?.accountnumber}
                                 </p>
                                 <p className="text-xs lg:text-sm">
-                                  {record?.customer}
+                                  {record?.accountname}
                                 </p>
                               </div>
                             );
-                          } else if (column?.dataIndex === "notify_url") {
+                          } else if (column?.dataIndex === "notifyurl") {
                             return (
                               <a
                                 href={value}
@@ -485,6 +557,8 @@ export default function Exclusive() {
         setPaidDate={setPaidDate}
         account={accountNumber}
         setAccount={setAccountNumber}
+        setPage={setPage}
+        timeoutId={timeoutId}
       />
     </div>
   );

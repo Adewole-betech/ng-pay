@@ -5,8 +5,6 @@ import { toast } from "react-toastify";
 const initialState = {
   paymentsHistory: [],
   historyLoading: false,
-  exclusivePayments: [],
-  exclusiveLoading: false,
 
   paymentHistoryColumns: [
     {

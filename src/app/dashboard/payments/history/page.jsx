@@ -338,7 +338,7 @@ export default function History() {
                 onItemClick={(e) => setStatus(e?.value)}
                 menuButton={
                   <MenuButton className="border-r border-y py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>{status ? status : "Status"}</p>
+                    <p className="capitalize">{status ? status : "Status"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }

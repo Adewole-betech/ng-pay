@@ -23,7 +23,7 @@ const Filter = ({
   function clearFilters() {
     setMethod("");
     setRefId("");
-    setSelectedDate();
+    setSelectedDate(["", ""]);
     setStatus("");
     setTxId("");
   }
@@ -105,7 +105,7 @@ const Filter = ({
               value={status}
               onChange={(e) => setStatus(e)}
               id="status"
-              placeholder="Enter Status"
+              placeholder="Select Status"
               size="large"
               allowClear
               options={[

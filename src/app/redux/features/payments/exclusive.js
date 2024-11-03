@@ -2,45 +2,48 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosAuth } from "../../api/axios";
 
 const initialState = {
+  exclusivePayments: [],
+  exclusiveLoading: false,
+
   paymentExclusiveColumns: [
     {
-      key: "merchant_id",
-      dataIndex: "merchant_id",
+      key: "mchid",
+      dataIndex: "mchid",
       title: "Merchant ID",
       width: 120,
       hidden: false,
     },
     {
-      key: "account_number",
-      dataIndex: "account_number",
+      key: "accountnumber",
+      dataIndex: "accountnumber",
       title: "Account Number",
       width: 150,
       hidden: false,
     },
     {
-      key: "bank_name",
-      dataIndex: "bank_name",
+      key: "bankname",
+      dataIndex: "bankname",
       title: "Bank Name",
       width: 150,
       hidden: false,
     },
     {
-      key: "notify_url",
-      dataIndex: "notify_url",
+      key: "notifyurl",
+      dataIndex: "notifyurl",
       title: "Notify URL",
       width: 150,
       hidden: false,
     },
     {
-      key: "create_time",
-      dataIndex: "create_time",
+      key: "createtime",
+      dataIndex: "createtime",
       title: "Create Time",
       width: 150,
       hidden: false,
     },
     {
-      key: "paid_time",
-      dataIndex: "paid_time",
+      key: "lastpaidtime",
+      dataIndex: "lastpaidtime",
       title: "Last Paid Time",
       width: 150,
       hidden: false,
@@ -62,6 +65,28 @@ const initialState = {
   ],
 };
 
+export const getPaymentsExclusive = createAsyncThunk(
+  "paymentExclusive/getPaymentsExclusive",
+  async ({
+    page,
+    page_size,
+    start_date = "",
+    end_date = "",
+    start_paid_date = "",
+    end_paid_date = "",
+    status = "",
+    mchid = "",
+    accountnumber = "",
+  }) => {
+    return axiosAuth
+      .get(
+        `/api/payments/exclusive-account-history?page=${page}&page_size=${page_size}&end_date=${end_date}&start_date=${start_date}&end_paid_date=${end_paid_date}&start_paid_date=${start_paid_date}&status=${status}&mchid=${mchid}&accountnumber=${accountnumber}`
+      )
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
 const exclusiveSlice = createSlice({
   name: "paymentExclusive",
   initialState,
@@ -73,7 +98,38 @@ const exclusiveSlice = createSlice({
       };
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder.addCase(getPaymentsExclusive.pending, (state) => {
+      return {
+        ...state,
+        exclusiveLoading: true,
+      };
+    });
+    builder.addCase(getPaymentsExclusive.fulfilled, (state, action) => {
+      if (action.payload.results) {
+        return {
+          ...state,
+          exclusiveLoading: false,
+          exclusivePayments: action.payload,
+        };
+      } else {
+        toast.error(`Error fetching exclusive payments`);
+        return {
+          ...state,
+          exclusiveLoading: false,
+          exclusivePayments: [],
+        };
+      }
+    });
+    builder.addCase(getPaymentsExclusive.rejected, (state, action) => {
+      toast.error(action.error.message);
+      return {
+        ...state,
+        exclusiveLoading: false,
+        exclusivePayments: [],
+      };
+    });
+  },
 });
 
 export const { setExclusiveColumns } = exclusiveSlice.actions;

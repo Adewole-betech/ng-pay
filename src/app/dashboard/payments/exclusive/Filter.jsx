@@ -17,10 +17,12 @@ const Filter = ({
   setPaidDate,
   createdDate,
   setCreatedDate,
+  setPage,
+  timeoutId,
 }) => {
   function clearFilters() {
-    setPaidDate();
-    setCreatedDate();
+    setPaidDate(["", ""]);
+    setCreatedDate(["", ""]);
     setStatus("");
     setMerchantId("");
     setAccount("");
@@ -45,7 +47,9 @@ const Filter = ({
             </label>
             <DatePicker.RangePicker
               value={createdDate}
-              onChange={(e) => setCreatedDate(e)}
+              onChange={(e) =>
+                e ? setCreatedDate(e) : setCreatedDate(["", ""])
+              }
               id="date"
               separator={"-"}
               placeholder={`${dayjs().format("MMMM D, YYYY")}`}
@@ -61,7 +65,7 @@ const Filter = ({
             </label>
             <DatePicker.RangePicker
               value={paidDate}
-              onChange={(e) => setPaidDate(e)}
+              onChange={(e) => (e ? setPaidDate(e) : setPaidDate(["", ""]))}
               id="date"
               separator={"-"}
               placeholder={`${dayjs().format("MMMM D, YYYY")}`}
@@ -87,21 +91,20 @@ const Filter = ({
           </div>
           <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="account" className="w-fit font-medium">
-              Account NUmber
+              Account Number
             </label>
-            <Select
+            <Input
               value={account}
-              onSearch={(e) => setAccount(e)}
+              onChange={(e) => {
+                clearTimeout(timeoutId);
+
+                setAccount(e.target.value);
+                timeoutId = setTimeout(setPage, 3000, 1);
+              }}
               id="account"
-              placeholder="Enter ID"
+              placeholder="Enter Account Number"
               size="large"
               allowClear
-              showSearch
-              options={[
-                { label: "Cash Deposit", value: "cash deposit" },
-                { label: "Bank Transfer", value: "bank transfer" },
-                { label: "Card Payment", value: "card payment" },
-              ]}
             />
           </div>
           <div className="flex flex-col gap-1 2xl:gap-2">
@@ -110,17 +113,18 @@ const Filter = ({
             </label>
             <Select
               value={status}
-              //   mode="tags"
+              onChange={(e) => setStatus(e)}
               onSearch={(e) => setStatus(e)}
               id="status"
-              placeholder="Enter ID"
+              placeholder="Select Status"
               size="large"
               allowClear
               showSearch
+              className="w-full text-left"
               options={[
-                { label: "Active", value: "active" },
-                { label: "Inactive", value: "inactive" },
-                { label: "disabled", value: "disabled" },
+                { label: "Successful", value: "successful" },
+                { label: "Failed", value: "failed" },
+                { label: "Settled", value: "settled" },
               ]}
             />
           </div>
