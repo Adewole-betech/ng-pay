@@ -23,11 +23,11 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <p className="neutral-500 font-medium text-xs lg:text-sm">
                   Amount
                 </p>
-                <p className="font-bold text-lg md:text-xl lg:text-2xl capitalize">
-                  ₦
-                  {parseFloat(
-                    (selectedPayment?.paid_amount).toFixed(2)
-                  ).toLocaleString("en-us")}
+                <p className="font-bold text-lg md:text-xl lg:text-2xl capitalize lining-nums font-geistSans">
+                  
+                  {`₦${parseFloat(
+                    (selectedPayment?.amount).toFixed(2)
+                  ).toLocaleString("en-us")}`}
                 </p>
               </div>
               <div
@@ -56,18 +56,20 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Merchant ID</p>
                   <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.merchant_id}
+                    {selectedPayment?.mchid}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Transaction ID</p>
                   <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.tx_id}
+                    {selectedPayment?.txid}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5 gap-2 lg:gap-3 2xl:gap-4">
                   <p className="text-sm lg:text-base">
-                    Customer/<br />Recipient
+                    Customer/
+                    <br />
+                    Recipient
                   </p>
                   <p className="font-medium text-sm lg:text-base">
                     {selectedPayment?.customer}
@@ -79,25 +81,28 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Order Reference</p>
                   <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.ref_id}
+                    {selectedPayment?.ref}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Payment Method</p>
                   <p className="font-medium text-sm lg:text-base capitalize">
-                    {selectedPayment?.payment_method}
+                    {selectedPayment?.txtype}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Order Amount</p>
                   <p className="font-medium text-sm lg:text-base">
-                    ₦{selectedPayment?.order_amount}
+                    ₦
+                    {parseFloat(
+                      (selectedPayment?.amount).toFixed(2)
+                    ).toLocaleString("en-us")}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Create Time</p>
                   <p className="font-medium text-sm lg:text-base">
-                    {dayjs(selectedPayment?.create_time).format(
+                    {dayjs(selectedPayment?.createtime).format(
                       "YYYY-MM-DD HH:mm:ss"
                     )}
                   </p>
@@ -105,13 +110,16 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Paid Amount</p>
                   <p className="font-medium text-sm lg:text-base">
-                    ₦{selectedPayment?.paid_amount?.toLocaleString("en-us")}
+                    ₦
+                    {parseFloat(
+                      (selectedPayment?.amount).toFixed(2)
+                    ).toLocaleString("en-us")}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Paid Time</p>
                   <p className="font-medium text-sm lg:text-base">
-                    {dayjs(selectedPayment?.paid_time).format(
+                    {dayjs(selectedPayment?.settletime).format(
                       "YYYY-MM-DD HH:mm:ss"
                     )}
                   </p>
@@ -125,9 +133,11 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Notification Time</p>
                   <p className="font-medium text-sm lg:text-base">
-                    {dayjs(selectedPayment?.notification_time).format(
-                      "YYYY-MM-DD HH:mm:ss"
-                    )}
+                    {selectedPayment?.notification_time
+                      ? dayjs(selectedPayment?.notification_time).format(
+                          "YYYY-MM-DD HH:mm:ss"
+                        )
+                      : ""}
                   </p>
                 </div>
               </div>

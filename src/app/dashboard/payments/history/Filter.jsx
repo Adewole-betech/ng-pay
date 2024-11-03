@@ -1,4 +1,3 @@
-
 import RightModal from "@/app/components/RightModal";
 import { HiMiniXMark } from "react-icons/hi2";
 import { Button, DatePicker, Input, Select } from "antd";
@@ -18,6 +17,8 @@ const Filter = ({
   setMethod,
   selectedDate,
   setSelectedDate,
+  setPage,
+  timeoutId,
 }) => {
   function clearFilters() {
     setMethod("");
@@ -46,7 +47,9 @@ const Filter = ({
             </label>
             <DatePicker.RangePicker
               value={selectedDate}
-              onChange={(e) => setSelectedDate(e)}
+              onChange={(e) =>
+                e ? setSelectedDate(e) : setSelectedDate(["", ""])
+              }
               id="date"
               separator={"-"}
               placeholder={`${dayjs().format("MMMM D, YYYY")}`}
@@ -62,7 +65,12 @@ const Filter = ({
             </label>
             <Input
               value={txId}
-              onChange={(e) => setTxId(e.target.value)}
+              onChange={(e) => {
+                clearTimeout(timeoutId);
+
+                setTxId(e.target.value);
+                timeoutId = setTimeout(setPage, 3000, 1);
+              }}
               id="txId"
               placeholder="Enter ID"
               size="large"
@@ -76,7 +84,12 @@ const Filter = ({
             </label>
             <Input
               value={refId}
-              onChange={(e) => setRefId(e.target.value)}
+              onChange={(e) => {
+                clearTimeout(timeoutId);
+
+                setRefId(e.target.value);
+                timeoutId = setTimeout(setPage, 3000, 1);
+              }}
               id="refId"
               placeholder="Enter ID"
               size="large"
@@ -88,18 +101,17 @@ const Filter = ({
               Status
             </label>
             <Select
+              className="w-full text-left"
               value={status}
-              //   mode="tags"
-              onSearch={(e) => setStatus(e)}
+              onChange={(e) => setStatus(e)}
               id="status"
-              placeholder="Enter ID"
+              placeholder="Enter Status"
               size="large"
               allowClear
-              showSearch
               options={[
                 { label: "Successful", value: "successful" },
                 { label: "Failed", value: "failed" },
-                { label: "Pending", value: "pending" },
+                { label: "Settled", value: "settled" },
               ]}
             />
           </div>
@@ -108,17 +120,18 @@ const Filter = ({
               Payment Method
             </label>
             <Select
+              className="w-full text-left"
               value={method}
+              onChange={(e) => setMethod(e)}
               onSearch={(e) => setMethod(e)}
               id="method"
-              placeholder="Enter ID"
+              placeholder="Select transaction type"
               size="large"
               allowClear
               showSearch
               options={[
-                { label: "Cash Deposit", value: "cash deposit" },
-                { label: "Bank Transfer", value: "bank transfer" },
-                { label: "Card Payment", value: "card payment" },
+                { label: "Recharge", value: "recharge" },
+                { label: "Adjust", value: "adjust" },
               ]}
             />
           </div>

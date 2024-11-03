@@ -128,7 +128,7 @@ export default function DashboardLayout({ children }) {
   ];
 
   return isLoggedIn ? (
-    <div className="bg-neutral-50 md:grid md:grid-cols-12 justify-center items-center h-screen w-full absolute hidden md:relative p-6 2xl:p-10 gap-6 ">
+    <div className="bg-neutral-50 md:grid md:grid-cols-12 justify-center items-center h-screen w-full absolute hidden md:relative p-6 2xl:p-10 gap-6 lining-nums">
       <div className="flex flex-col bg-white rounded-xl 2xl:rounded-2xl pt-6 2xl:pt-12 gap-3 sticky left-0 top-0 bottom-0 h-full justify-between md:col-span-1 lg:col-span-3 2xl:col-span-2">
         <div className="flex flex-col px-2 gap-4">
           <div className="flex gap-4 items-center justify-center w-full">

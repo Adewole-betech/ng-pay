@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={`${GeistSans.variable} ${Satoshi.variable} font-geistSans text-neutral-900`}
+        className={`${GeistSans.variable} font-geistSans text-neutral-900 lining-nums`}
         suppressHydrationWarning={true}
       >
         <AllProvider>

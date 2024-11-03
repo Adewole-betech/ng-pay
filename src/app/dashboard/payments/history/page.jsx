@@ -2,8 +2,8 @@
 
 import { CustomButton } from "@/app/components/button";
 import { RiCloseLine } from "@remixicon/react";
-import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
-import { Button, Checkbox, Space, Table, Tag, Tooltip } from "antd";
+import { FocusableItem, Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
+import { Button, Checkbox, Input, Space, Table, Tag, Tooltip } from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
@@ -11,6 +11,7 @@ import {
   FilterSearch,
   Import,
   Refresh,
+  SearchNormal1,
 } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
@@ -40,7 +41,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
-import { setHistoryColumns } from "@/app/redux/features/payments/history";
+import {
+  getPaymentsHistory,
+  setHistoryColumns,
+} from "@/app/redux/features/payments/history";
 import Filter from "./Filter";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
@@ -53,17 +57,44 @@ export default function History() {
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(["", ""]);
   const [txID, setTxID] = useState("");
   const [refID, setRefID] = useState("");
   const [status, setStatus] = useState("");
   const [method, setMethod] = useState("");
+  const [merchant, setMerchant] = useState("");
+
+  let timeoutId;
+
+  const { paymentHistoryColumns, historyLoading, paymentsHistory } =
+    useSelector(() => store.getState().paymentHistory);
 
   function handleFilter() {
     setShowFilter(!showFilter);
+  }
+
+  function loadData() {
+    dispatch(
+      getPaymentsHistory({
+        page: page,
+        page_size: size,
+        start_date: selectedDate[0]
+          ? dayjs(selectedDate[0]).format("YYYY-MM-DD")
+          : "",
+        end_date: selectedDate[1]
+          ? dayjs(selectedDate[1]).format("YYYY-MM-DD")
+          : "",
+        status: status,
+        txid: txID,
+        txtype: method,
+        ref: refID,
+        txtype: method,
+      })
+    );
   }
 
   const itemRender = (pag, type, originalElement) => {
@@ -72,7 +103,7 @@ export default function History() {
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
@@ -86,7 +117,7 @@ export default function History() {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
@@ -107,10 +138,6 @@ export default function History() {
     }
     return originalElement;
   };
-
-  const { paymentHistoryColumns } = useSelector(
-    () => store.getState().paymentHistory
-  );
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -185,6 +212,17 @@ export default function History() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (paymentsHistory) {
+      setTotal(paymentsHistory?.count);
+      setHistoryData(paymentsHistory?.results);
+    }
+  }, [paymentsHistory]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size, selectedDate, status, txID, method, refID]);
+
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white p-4 2xl:p-6 rounded-xl 2xl:rounded-2xl flex flex-col gap-4 2xl:gap-5 h-full">
@@ -192,53 +230,128 @@ export default function History() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Menu
-                value={""}
+                value={merchant}
+                onItemClick={(e) => setMerchant(e?.value)}
                 menuButton={
                   <MenuButton className="border-y border-l py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 rounded-s-md lg:rounded-s-lg font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Merchant ID</p>
+                    <p>{merchant ? merchant : "Merchant ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Merchant ID"
+                      value={merchant}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setMerchant(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
                 <MenuItem disabled>Merchant ID</MenuItem>
+                {historyData?.map((hist) => (
+                  <MenuItem
+                    key={hist?.id}
+                    value={hist?.mchid}
+                    className={"uppercase"}
+                  >
+                    {hist?.mchid}
+                  </MenuItem>
+                ))}
               </Menu>
               <Menu
-                value={""}
+                value={txID}
+                onItemClick={(e) => setTxID(e?.value)}
                 menuButton={
                   <MenuButton className="border-y py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Transaction ID</p>
+                    <p>{txID ? txID : "Transaction ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
-                <MenuItem disabled>Transaction ID</MenuItem>
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Transaction ID"
+                      value={txID}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setTxID(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
+                {historyData?.map((hist) => (
+                  <MenuItem key={hist?.id} value={hist?.txid}>
+                    {hist?.txid}
+                  </MenuItem>
+                ))}
               </Menu>
               <Menu
-                value={""}
+                value={refID}
+                onItemClick={(e) => setRefID(e?.value)}
                 menuButton={
                   <MenuButton className="border-y py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Reference ID</p>
+                    <p>{refID ? refID : "Reference ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
-                <MenuItem disabled>Reference ID</MenuItem>
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Reference ID"
+                      value={refID}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setRefID(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
+                {historyData?.map((hist) => (
+                  <MenuItem key={hist?.id} value={hist?.ref}>
+                    {hist?.ref}
+                  </MenuItem>
+                ))}
               </Menu>
               <Menu
-                value={""}
+                value={status}
+                onItemClick={(e) => setStatus(e?.value)}
                 menuButton={
                   <MenuButton className="border-r border-y py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Status</p>
+                    <p>{status ? status : "Status"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
-                <MenuItem disabled>Status</MenuItem>
+                <MenuItem value="settled">Settled</MenuItem>
+                <MenuItem value={"successful"}>Successful</MenuItem>
+                <MenuItem value={"failed"}>Failed</MenuItem>
               </Menu>
             </div>
             <div className="flex items-center gap-2 2xl:gap-3">
               <CustomButton
                 outlined
+                click={loadData}
                 className="border !py-2 !px-3 2xl:!py-2.5 2xl:!px-5 flex items-center gap-1.5 2xl:gap-2 text-base rounded-md lg:rounded-lg !border-neutral-200 font-medium"
               >
                 <Refresh className="size-4 2xl:size-5" />
@@ -272,13 +385,13 @@ export default function History() {
                 />
               </Tag>
             )}
-            {selectedDate && (
+            {selectedDate && selectedDate[0] !== "" && (
               <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
-                {`${dayjs(selectedDate[0]).format("MMM D")} - ${dayjs(
+                {`${dayjs(selectedDate[0]).format("MMM D, YYYY")} - ${dayjs(
                   selectedDate[1]
-                ).format("MMM D")}`}{" "}
+                ).format("MMM D, YYYY")}`}{" "}
                 <RiCloseLine
-                  onClick={() => setSelectedDate()}
+                  onClick={() => setSelectedDate(["", ""])}
                   className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
                 />
               </Tag>
@@ -327,7 +440,7 @@ export default function History() {
                   <Table
                     className="no-scrollbar"
                     bordered
-                    dataSource={historyTable}
+                    dataSource={historyData}
                     components={{
                       header: {
                         cell: TableHeaderCell,
@@ -340,7 +453,7 @@ export default function History() {
                     scroll={{
                       y: 800,
                     }}
-                    // loading={loading}
+                    loading={historyLoading}
                     pagination={{
                       pageSize: size,
                       itemRender: itemRender,
@@ -534,6 +647,8 @@ export default function History() {
         setMethod={setMethod}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        setPage={setPage}
+        timeoutId={timeoutId}
       />
     </div>
   );

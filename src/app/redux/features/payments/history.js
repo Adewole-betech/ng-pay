@@ -1,39 +1,45 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosAuth } from "../../api/axios";
+import { toast } from "react-toastify";
 
 const initialState = {
+  paymentsHistory: [],
+  historyLoading: false,
+  exclusivePayments: [],
+  exclusiveLoading: false,
+
   paymentHistoryColumns: [
     {
-      key: "merchant_id",
-      dataIndex: "merchant_id",
+      key: "mchid",
+      dataIndex: "mchid",
       title: "Merchant ID",
       width: 120,
       hidden: false,
     },
     {
-      key: "tx_id",
-      dataIndex: "tx_id",
+      key: "txid",
+      dataIndex: "txid",
       title: "Transaction ID",
       width: 150,
       hidden: false,
     },
     {
-      key: "ref_id",
-      dataIndex: "ref_id",
+      key: "ref",
+      dataIndex: "ref",
       title: "Reference ID",
       width: 150,
       hidden: false,
     },
     {
-      key: "order_amount",
-      dataIndex: "order_amount",
+      key: "amount",
+      dataIndex: "amount",
       title: "Order Amount",
       width: 120,
       hidden: false,
     },
     {
-      key: "create_time",
-      dataIndex: "create_time",
+      key: "createtime",
+      dataIndex: "createtime",
       title: "Create Time",
       width: 150,
       hidden: false,
@@ -46,8 +52,8 @@ const initialState = {
       hidden: false,
     },
     {
-      key: "paid_amount",
-      dataIndex: "paid_amount",
+      key: "amount",
+      dataIndex: "amount",
       title: "Paid Amount",
       width: 120,
       hidden: false,
@@ -62,6 +68,27 @@ const initialState = {
   ],
 };
 
+export const getPaymentsHistory = createAsyncThunk(
+  "paymentHistory/getPaymentsHistory",
+  async ({
+    page,
+    page_size,
+    start_date = "",
+    end_date = "",
+    status = "",
+    txid = "",
+    txtype = "",
+    ref = "",
+  }) => {
+    return axiosAuth
+      .get(
+        `/api/payments/transaction-history?page=${page}&page_size=${page_size}&end_date=${end_date}&start_date=${start_date}&status=${status}&txid=${txid}&txtype=${txtype}&ref=${ref}`
+      )
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
 const historySlice = createSlice({
   name: "paymentHistory",
   initialState,
@@ -73,7 +100,38 @@ const historySlice = createSlice({
       };
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder.addCase(getPaymentsHistory.pending, (state) => {
+      return {
+        ...state,
+        historyLoading: true,
+      };
+    });
+    builder.addCase(getPaymentsHistory.fulfilled, (state, action) => {
+      if (action.payload.results) {
+        return {
+          ...state,
+          historyLoading: false,
+          paymentsHistory: action.payload,
+        };
+      } else {
+        toast.error(`Error fetching payments history`);
+        return {
+          ...state,
+          historyLoading: false,
+          paymentsHistory: [],
+        };
+      }
+    });
+    builder.addCase(getPaymentsHistory.rejected, (state, action) => {
+      toast.error(action.error.message);
+      return {
+        ...state,
+        historyLoading: false,
+        paymentsHistory: [],
+      };
+    });
+  },
 });
 
 export const { setHistoryColumns } = historySlice.actions;
