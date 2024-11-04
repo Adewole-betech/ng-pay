@@ -1,6 +1,6 @@
 import { CustomButton } from "@/app/components/button";
 import { MenuButton, MenuItem, Menu, FocusableItem } from "@szhsin/react-menu";
-import { Avatar, Button, Checkbox, Space, Table, Tooltip } from "antd";
+import { Avatar, Button, Checkbox, Input, Space, Table, Tooltip } from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
@@ -530,7 +530,7 @@ const Payout = ({ setCurrentPage }) => {
                             </Space>
                           );
                         }
-                      } else if (column?.dataIndex === "date") {
+                      } else if (column?.dataIndex === "create_time") {
                         return (
                           <p className="capitalize">
                             {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
@@ -539,13 +539,16 @@ const Payout = ({ setCurrentPage }) => {
                       } else if (column?.dataIndex === "recipient") {
                         return (
                           <div className="flex items-center gap-2 lg:gap-3">
-                            <Avatar src="">TF</Avatar>
+                            <Avatar src="">
+                              {record?.account_name.split(" ")[0].slice(0, 1)}
+                              {record?.account_name.split(" ")[1].slice(0, 1)}
+                            </Avatar>
                             <div className="flex flex-col xl:gap-1">
                               <p className="font-medium text-xs lg:text-sm">
-                                {record?.recipient_account}
+                                {record?.account_name}
                               </p>
                               <p className="text-xs lg:text-sm">
-                                {record?.customer}
+                                {record?.account_number} - {record?.bank_code}
                               </p>
                             </div>
                           </div>

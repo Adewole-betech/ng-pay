@@ -113,15 +113,15 @@ export const historyTable = [
 
 export const historyTableColumns = [
   {
-    key: "tx_id",
-    dataIndex: "tx_id",
+    key: "txid",
+    dataIndex: "txid",
     title: "Transaction ID",
     width: 150,
     hidden: false,
   },
   {
-    key: "date",
-    dataIndex: "date",
+    key: "create_time",
+    dataIndex: "create_time",
     title: "Date",
     width: 150,
     hidden: false,
