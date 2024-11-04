@@ -200,7 +200,6 @@ export default function History() {
   useEffect(() => {
     if (columns) {
       dispatch(setHistoryColumns({ columns: columns }));
-      router;
     }
   }, [columns]);
 

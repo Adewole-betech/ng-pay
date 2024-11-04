@@ -1,5 +1,5 @@
 import { CustomButton } from "@/app/components/button";
-import { MenuButton, MenuItem, Menu } from "@szhsin/react-menu";
+import { MenuButton, MenuItem, Menu, FocusableItem } from "@szhsin/react-menu";
 import { Avatar, Button, Checkbox, Space, Table, Tooltip } from "antd";
 import {
   ArrowLeft2,
@@ -11,6 +11,7 @@ import {
   Import,
   Receipt2,
   Refresh,
+  SearchNormal1,
   Wallet3,
 } from "iconsax-react";
 import { useEffect, useState } from "react";
@@ -44,7 +45,10 @@ import store from "@/app/redux/store/store";
 import { FaChevronDown } from "react-icons/fa6";
 import PaymentInformation from "../PaymentInformation";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { setPayoutColumns } from "@/app/redux/features/payout";
+import {
+  getPayoutHistory,
+  setPayoutColumns,
+} from "@/app/redux/features/payout";
 import Filter from "../Filter";
 
 const Payout = ({ setCurrentPage }) => {
@@ -57,15 +61,41 @@ const Payout = ({ setCurrentPage }) => {
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(["", ""]);
   const [settlementID, setSettlementID] = useState("");
   const [merchantID, setMerchantID] = useState("");
+  const [reference, setReference] = useState("");
   const [status, setStatus] = useState("");
   function handleFilter() {
     setShowFilter(!showFilter);
+  }
+
+  let timeoutId;
+
+  const { payoutColumns, historyLoading, payoutHistory } = useSelector(
+    () => store.getState().payout
+  );
+
+  function loadData() {
+    dispatch(
+      getPayoutHistory({
+        page: page,
+        page_size: size,
+        start_date: selectedDate[0]
+          ? dayjs(selectedDate[0]).format("YYYY-MM-DD")
+          : "",
+        end_date: selectedDate[1]
+          ? dayjs(selectedDate[1]).format("YYYY-MM-DD")
+          : "",
+        status: status,
+        txid: settlementID,
+        reference: reference,
+      })
+    );
   }
 
   const itemRender = (pag, type, originalElement) => {
@@ -74,7 +104,7 @@ const Payout = ({ setCurrentPage }) => {
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
@@ -88,7 +118,7 @@ const Payout = ({ setCurrentPage }) => {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
@@ -109,8 +139,6 @@ const Payout = ({ setCurrentPage }) => {
     }
     return originalElement;
   };
-
-  const { payoutColumns } = useSelector(() => store.getState().payout);
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -178,7 +206,6 @@ const Payout = ({ setCurrentPage }) => {
   useEffect(() => {
     if (columns) {
       dispatch(setPayoutColumns({ columns: columns }));
-      router;
     }
   }, [columns]);
 
@@ -188,6 +215,17 @@ const Payout = ({ setCurrentPage }) => {
       router.push(pathname);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (payoutHistory) {
+      setTotal(payoutHistory?.count);
+      setHistoryData(payoutHistory?.results);
+    }
+  }, [payoutHistory]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size, selectedDate, reference]);
 
   return (
     <>
@@ -240,15 +278,37 @@ const Payout = ({ setCurrentPage }) => {
             <MenuItem disabled>Transaction ID</MenuItem>
           </Menu>
           <Menu
-            value={""}
+            value={reference}
+            onItemClick={(e) => setReference(e?.value)}
             menuButton={
               <MenuButton className="border-y py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                <p>Reference ID</p>
+                <p>{reference ? reference : "Reference ID"}</p>
                 <FaChevronDown className="size-3 2xl:size-4 " />
               </MenuButton>
             }
           >
-            <MenuItem disabled>Reference ID</MenuItem>
+            <FocusableItem>
+              {({ ref }) => (
+                <Input
+                  size="large"
+                  ref={ref}
+                  placeholder="Reference ID"
+                  value={txID}
+                  onChange={(e) => {
+                    clearTimeout(timeoutId);
+
+                    setReference(e.target.value);
+                    timeoutId = setTimeout(setPage, 3000, 1);
+                  }}
+                  prefix={<SearchNormal1 />}
+                />
+              )}
+            </FocusableItem>
+            {historyData?.map((hist) => (
+              <MenuItem key={hist?.id} value={hist?.reference}>
+                {hist?.reference}
+              </MenuItem>
+            ))}
           </Menu>
           <Menu
             value={""}
@@ -265,6 +325,7 @@ const Payout = ({ setCurrentPage }) => {
         <div className="flex items-center gap-2 2xl:gap-3">
           <CustomButton
             outlined
+            click={loadData}
             className="border !py-2 !px-3 2xl:!py-2.5 2xl:!px-5 flex items-center gap-1.5 2xl:gap-2 text-base rounded-md lg:rounded-lg !border-neutral-200 font-medium"
           >
             <Refresh className="size-4 2xl:size-5" />
@@ -289,7 +350,7 @@ const Payout = ({ setCurrentPage }) => {
         </div>
       </div>
       <div className="flex gap-2 lg:gap-3">
-        {selectedDate && (
+        {selectedDate && selectedDate[0] !== "" && (
           <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
             {`${dayjs(selectedDate[0]).format("MMM D")} - ${dayjs(
               selectedDate[1]
@@ -335,7 +396,7 @@ const Payout = ({ setCurrentPage }) => {
               <Table
                 className="no-scrollbar"
                 bordered
-                dataSource={historyTable}
+                dataSource={historyData}
                 components={{
                   header: {
                     cell: TableHeaderCell,
@@ -348,7 +409,7 @@ const Payout = ({ setCurrentPage }) => {
                 scroll={{
                   y: 800,
                 }}
-                // loading={loading}
+                loading={historyLoading}
                 pagination={{
                   pageSize: size,
                   itemRender: itemRender,
@@ -428,7 +489,7 @@ const Payout = ({ setCurrentPage }) => {
                             ₦{parseFloat(value)?.toLocaleString("en-us")}
                           </p>
                         );
-                      } else if (column?.dataIndex.includes("tx_id")) {
+                      } else if (column?.dataIndex.includes("txid")) {
                         return <p className="uppercase font-medium">{value}</p>;
                       } else if (column?.dataIndex === "actions") {
                         if (record?.status === "pending") {

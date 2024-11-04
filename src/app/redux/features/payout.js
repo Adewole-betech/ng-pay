@@ -2,6 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosAuth } from "../api/axios";
 
 const initialState = {
+  payoutHistory: [],
+  historyLoading: false,
+
   payoutColumns: [
     {
       key: "tx_id",
@@ -48,6 +51,26 @@ const initialState = {
   ],
 };
 
+export const getPayoutHistory = createAsyncThunk(
+  "payout/getPayoutHistory",
+  async ({
+    page,
+    page_size,
+    start_date = "",
+    end_date = "",
+    status = "",
+    txid = "",
+    reference = "",
+  }) => {
+    return axiosAuth
+      .get(
+        `/api/payments/payout-history?page=${page}&page_size=${page_size}&end_date=${end_date}&start_date=${start_date}&status=${status}&txid=${txid}&reference=${reference}`
+      )
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
 const payoutSlice = createSlice({
   name: "payout",
   initialState,
@@ -59,7 +82,38 @@ const payoutSlice = createSlice({
       };
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder.addCase(getPayoutHistory.pending, (state) => {
+      return {
+        ...state,
+        historyLoading: true,
+      };
+    });
+    builder.addCase(getPayoutHistory.fulfilled, (state, action) => {
+      if (action.payload.results) {
+        return {
+          ...state,
+          historyLoading: false,
+          payoutHistory: action.payload,
+        };
+      } else {
+        toast.error(`Error fetching balance history`);
+        return {
+          ...state,
+          historyLoading: false,
+          payoutHistory: [],
+        };
+      }
+    });
+    builder.addCase(getPayoutHistory.rejected, (state, action) => {
+      toast.error(action.error.message);
+      return {
+        ...state,
+        historyLoading: false,
+        payoutHistory: [],
+      };
+    });
+  },
 });
 
 export const { setPayoutColumns } = payoutSlice.actions;
