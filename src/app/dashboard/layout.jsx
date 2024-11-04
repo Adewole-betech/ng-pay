@@ -91,16 +91,16 @@ export default function DashboardLayout({ children }) {
       link: "/dashboard/balances",
       desc: "",
       children: [
-        // {
-        //   link: "/dashboard/balances/history",
-        //   title: "Balance History",
-        //   desc: "Get an overview of your balance history.",
-        // },
         {
-          link: "/dashboard/balances/settlement",
-          title: "Settlement History",
-          desc: "Get an overview of your settlement history.",
+          link: "/dashboard/balances/history",
+          title: "Balance History",
+          desc: "Get an overview of your balance history.",
         },
+        // {
+        //   link: "/dashboard/balances/settlement",
+        //   title: "Settlement History",
+        //   desc: "Get an overview of your settlement history.",
+        // },
       ],
     },
     {
@@ -208,7 +208,7 @@ export default function DashboardLayout({ children }) {
             onClick={() => {
               toast.error("Logged out!");
               dispatch(logout());
-              router.push("/auth/login");
+              redirect("/auth/login");
             }}
             className="text-neutral-500 size-4 2xl:size-6 hover:cursor-pointer"
           />

@@ -2,13 +2,23 @@
 
 import { CustomButton } from "@/app/components/button";
 import { RiCloseLine } from "@remixicon/react";
-import { Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
-import { Button, Checkbox, DatePicker, Space, Table, Tag, Tooltip } from "antd";
+import { FocusableItem, Menu, MenuButton, MenuItem } from "@szhsin/react-menu";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Input,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
   Bank,
   Briefcase,
+  CalendarSearch,
   Copy,
   Eye,
   EyeSlash,
@@ -47,7 +57,10 @@ import store from "@/app/redux/store/store";
 import PaymentInformation from "./PaymentInformation";
 import Filter from "./Filter";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { setBalanceHistoryColumns } from "@/app/redux/features/balance/history";
+import {
+  getBalancesHistory,
+  setBalanceHistoryColumns,
+} from "@/app/redux/features/balance/history";
 
 const { RangePicker } = DatePicker;
 
@@ -61,17 +74,42 @@ export default function History() {
   const [showPayment, setShowPayment] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(["", ""]);
   const [settlementID, setSettlementID] = useState("");
   const [merchantID, setMerchantID] = useState("");
   const [status, setStatus] = useState("");
   const [method, setMethod] = useState("");
 
+  let timeoutId;
+
+  const { balanceHistoryColumns, historyLoading, balanceHistory } = useSelector(
+    () => store.getState().balanceHistory
+  );
+
   function handleFilter() {
     setShowFilter(!showFilter);
+  }
+
+  function loadData() {
+    dispatch(
+      getBalancesHistory({
+        page: page,
+        page_size: size,
+        start_date: selectedDate[0]
+          ? dayjs(selectedDate[0]).format("YYYY-MM-DD")
+          : "",
+        end_date: selectedDate[1]
+          ? dayjs(selectedDate[1]).format("YYYY-MM-DD")
+          : "",
+        status: status,
+        txid: settlementID,
+        debitorcredit: method,
+      })
+    );
   }
 
   const itemRender = (pag, type, originalElement) => {
@@ -80,7 +118,7 @@ export default function History() {
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
@@ -94,7 +132,7 @@ export default function History() {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={loading}
+          loading={historyLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
@@ -115,10 +153,6 @@ export default function History() {
     }
     return originalElement;
   };
-
-  const { balanceHistoryColumns } = useSelector(
-    () => store.getState().balanceHistory
-  );
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -193,6 +227,17 @@ export default function History() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (balanceHistory) {
+      setTotal(balanceHistory?.count);
+      setHistoryData(balanceHistory?.results);
+    }
+  }, [balanceHistory]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size, selectedDate, settlementID, method]);
+
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white p-4 2xl:p-6 rounded-xl 2xl:rounded-2xl flex flex-col gap-4 2xl:gap-5 h-full">
@@ -254,38 +299,93 @@ export default function History() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Menu
-                value={""}
+                value={merchantID}
+                onItemClick={(e) => setMerchantID(e?.value)}
                 menuButton={
                   <MenuButton className="border-y border-l py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 rounded-s-md lg:rounded-s-lg font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Merchant ID</p>
+                    <p>{merchantID ? merchantID : "Merchant ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Merchant ID"
+                      value={merchantID}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setMerchantID(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
                 <MenuItem disabled>Merchant ID</MenuItem>
+                {historyData?.map((hist) => (
+                  <MenuItem
+                    key={hist?.id}
+                    value={hist?.mchid}
+                    className={"uppercase"}
+                  >
+                    {hist?.mchid}
+                  </MenuItem>
+                ))}
               </Menu>
               <Menu
-                value={""}
+                value={settlementID}
+                onItemClick={(e) => setSettlementID(e?.value)}
                 menuButton={
                   <MenuButton className="border-y py-2 2xl:py-2.5 px-3 2xl:px-4 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3 hover:border-primary-main">
-                    <p>Settlement ID</p>
+                    <p>{settlementID ? settlementID : "Transaction ID"}</p>
                     <FaChevronDown className="size-3 2xl:size-4 " />
                   </MenuButton>
                 }
               >
-                <MenuItem disabled>Settlement ID</MenuItem>
+                <FocusableItem>
+                  {({ ref }) => (
+                    <Input
+                      size="large"
+                      ref={ref}
+                      placeholder="Settlement ID"
+                      value={settlementID}
+                      onChange={(e) => {
+                        clearTimeout(timeoutId);
+
+                        setSettlementID(e.target.value);
+                        timeoutId = setTimeout(setPage, 3000, 1);
+                      }}
+                      prefix={<SearchNormal1 />}
+                    />
+                  )}
+                </FocusableItem>
+                {historyData?.map((hist) => (
+                  <MenuItem key={hist?.id} value={hist?.txid}>
+                    {hist?.txid}
+                  </MenuItem>
+                ))}
               </Menu>
               <RangePicker
                 value={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                format={"MMM D"}
+                onChange={(e) =>
+                  e ? setSelectedDate(e) : setSelectedDate(["", ""])
+                }
+                popupClassName="z-[10001]"
+                format={"MMM D, YYYY"}
+                placeholder={`${dayjs().format("MMMM D, YYYY")}`}
                 size="large"
+                suffixIcon={<CalendarSearch className="text-neutral-700" />}
                 className="border-r border-y border-l-0 py-2 2xl:py-2.5 px-3 2xl:px-4 rounded-e-md lg:rounded-e-lg rounded-s-none w-56 border-neutral-200 font-medium flex items-center gap-2 2xl:gap-3"
               />
             </div>
             <div className="flex items-center gap-2 2xl:gap-3">
               <CustomButton
                 outlined
+                click={loadData}
                 className="border !py-2 !px-3 2xl:!py-2.5 2xl:!px-5 flex items-center gap-1.5 2xl:gap-2 text-base rounded-md lg:rounded-lg !border-neutral-200 font-medium"
               >
                 <Refresh className="size-4 2xl:size-5" />
@@ -310,13 +410,13 @@ export default function History() {
             </div>
           </div>
           <div className="flex gap-2 lg:gap-3">
-            {selectedDate && (
+            {selectedDate && selectedDate[0] !== "" && (
               <Tag className="text-primary-main font-medium bg-primary-50 py-1.5 2xl:py-2 px-4 2xl:px-5 border-none flex items-center text-xs lg:text-sm rounded-md">
                 {`${dayjs(selectedDate[0]).format("MMM D")} - ${dayjs(
                   selectedDate[1]
                 ).format("MMM D")}`}{" "}
                 <RiCloseLine
-                  onClick={() => setSelectedDate()}
+                  onClick={() => setSelectedDate(["", ""])}
                   className="text-primary-main size-6 hover:cursor-pointer stroke-[3]"
                 />
               </Tag>
@@ -365,7 +465,7 @@ export default function History() {
                   <Table
                     className="no-scrollbar"
                     bordered
-                    dataSource={historyTable}
+                    dataSource={historyData}
                     components={{
                       header: {
                         cell: TableHeaderCell,
@@ -378,7 +478,7 @@ export default function History() {
                     scroll={{
                       y: 800,
                     }}
-                    // loading={loading}
+                    loading={historyLoading}
                     pagination={{
                       pageSize: size,
                       itemRender: itemRender,
@@ -433,7 +533,7 @@ export default function History() {
                             return (
                               <p
                                 className={`font-medium capitalize ${
-                                  record?.tx_type === "credit"
+                                  record?.debitorcredit === "credit"
                                     ? "text-darkGreen"
                                     : "text-darkRed"
                                 }`}
@@ -442,21 +542,34 @@ export default function History() {
                               </p>
                             );
                           } else if (
-                            column?.dataIndex === "merchant_id" ||
-                            column?.dataIndex === "settlement_id"
+                            column?.dataIndex === "mchid" ||
+                            column?.dataIndex === "txid"
                           ) {
                             return (
                               <p className="font-medium uppercase">{value}</p>
                             );
-                          } else if (column?.dataIndex.includes("balance")) {
+                          } else if (
+                            column?.dataIndex.includes("balance") ||
+                            column?.dataIndex.includes("balace")
+                          ) {
                             return (
                               <p className="capitalize">
                                 ₦{parseFloat(value)?.toLocaleString("en-us")}
                               </p>
                             );
                           } else if (column?.dataIndex === "actions") {
-                            return <Button type="link">View</Button>;
-                          } else if (column?.dataIndex === "date") {
+                            return (
+                              <Button
+                                type="link"
+                                onClick={() => {
+                                  setSelectedPayment(record);
+                                  setShowPayment(true);
+                                }}
+                              >
+                                View
+                              </Button>
+                            );
+                          } else if (column?.dataIndex === "settletime") {
                             return (
                               <p className="capitalize">
                                 {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
@@ -507,6 +620,8 @@ export default function History() {
         setMethod={setMethod}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
+        setPage={setPage}
+        timeoutId={timeoutId}
       />
     </div>
   );

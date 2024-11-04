@@ -92,7 +92,6 @@ export default function History() {
         txid: txID,
         txtype: method,
         ref: refID,
-        txtype: method,
       })
     );
   }

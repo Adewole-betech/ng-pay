@@ -1,4 +1,3 @@
-
 import RightModal from "@/app/components/RightModal";
 import { HiMiniXMark } from "react-icons/hi2";
 import { Button, DatePicker, Input, Select } from "antd";
@@ -18,11 +17,13 @@ const Filter = ({
   setMethod,
   selectedDate,
   setSelectedDate,
+  setPage,
+  timeoutId,
 }) => {
   function clearFilters() {
     setMethod("");
     setRefId("");
-    setSelectedDate();
+    setSelectedDate(["", ""]);
     setStatus("");
     setTxId("");
   }
@@ -42,7 +43,7 @@ const Filter = ({
         <div className="flex flex-col gap-3 lg:gap-4 2xl:gap-6 px-4 lg:px-6">
           <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="date" className="w-fit font-medium">
-              Create Date
+              Settle Date
             </label>
             <DatePicker.RangePicker
               value={selectedDate}
@@ -58,11 +59,16 @@ const Filter = ({
           </div>
           <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="txId" className="w-fit font-medium">
-              Transaction ID
+              Settlement ID
             </label>
             <Input
               value={txId}
-              onChange={(e) => setTxId(e.target.value)}
+              onChange={(e) => {
+                clearTimeout(timeoutId);
+
+                setTxId(e.target.value);
+                timeoutId = setTimeout(setPage, 3000, 1);
+              }}
               id="txId"
               placeholder="Enter ID"
               size="large"
@@ -70,7 +76,7 @@ const Filter = ({
               showSearch
             />
           </div>
-          <div className="flex flex-col gap-1 2xl:gap-2">
+          {/* <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="refId" className="w-fit font-medium">
               Reference ID
             </label>
@@ -82,8 +88,8 @@ const Filter = ({
               size="large"
               allowClear
             />
-          </div>
-          <div className="flex flex-col gap-1 2xl:gap-2">
+          </div> */}
+          {/* <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="status" className="w-fit font-medium">
               Status
             </label>
@@ -102,23 +108,22 @@ const Filter = ({
                 { label: "Pending", value: "pending" },
               ]}
             />
-          </div>
+          </div> */}
           <div className="flex flex-col gap-1 2xl:gap-2">
             <label htmlFor="method" className="w-fit font-medium">
-              Payment Method
+              Transaction Type
             </label>
             <Select
+              className="w-full text-left"
               value={method}
-              onSearch={(e) => setMethod(e)}
+              onChange={(e) => setMethod(e)}
               id="method"
-              placeholder="Enter ID"
+              placeholder="Select Transaction Type"
               size="large"
               allowClear
-              showSearch
               options={[
-                { label: "Cash Deposit", value: "cash deposit" },
-                { label: "Bank Transfer", value: "bank transfer" },
-                { label: "Card Payment", value: "card payment" },
+                { label: "Credit", value: "credit" },
+                { label: "Debit", value: "debit" },
               ]}
             />
           </div>

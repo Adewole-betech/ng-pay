@@ -54,7 +54,7 @@ const Filter = ({
               separator={"-"}
               placeholder={`${dayjs().format("MMMM D, YYYY")}`}
               popupClassName="z-[10001]"
-              format={"MMMM D, YYYY"}
+              format={"MMM D, YYYY"}
               size="large"
               suffixIcon={<CalendarSearch className="text-neutral-700" />}
             />

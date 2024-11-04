@@ -26,7 +26,7 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <p className="font-bold text-lg md:text-xl lg:text-2xl capitalize">
                   ₦
                   {parseFloat(
-                    (selectedPayment?.paid_amount).toFixed(2)
+                    selectedPayment?.amount?.toFixed(2)
                   ).toLocaleString("en-us")}
                 </p>
               </div>
@@ -56,76 +56,52 @@ const PaymentInformation = ({ show, setShow, selectedPayment }) => {
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Merchant ID</p>
                   <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.merchant_id}
+                    {selectedPayment?.mchid}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Transaction ID</p>
+                  <p className="text-sm lg:text-base">Settlement ID</p>
                   <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.tx_id}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5 gap-2 lg:gap-3 2xl:gap-4">
-                  <p className="text-sm lg:text-base">
-                    Customer/<br />Recipient
-                  </p>
-                  <p className="font-medium text-sm lg:text-base">
-                    {selectedPayment?.customer}
-                    <br />
-                    {selectedPayment?.recipient_account}-
-                    {selectedPayment?.recipient_bank}
+                    {selectedPayment?.txid}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Order Reference</p>
-                  <p className="font-medium text-sm lg:text-base uppercase">
-                    {selectedPayment?.ref_id}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Payment Method</p>
+                  <p className="text-sm lg:text-base">Transaction Type</p>
                   <p className="font-medium text-sm lg:text-base capitalize">
-                    {selectedPayment?.payment_method}
+                    {selectedPayment?.debitorcredit}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Order Amount</p>
                   <p className="font-medium text-sm lg:text-base">
-                    ₦{selectedPayment?.order_amount}
+                    ₦
+                    {parseFloat(
+                      selectedPayment?.amount?.toFixed(2)
+                    ).toLocaleString("en-us")}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
+                  <p className="text-sm lg:text-base">Balance Before</p>
+                  <p className="font-medium text-sm lg:text-base">
+                    ₦
+                    {parseFloat(
+                      selectedPayment?.balacebefore?.toFixed(2)
+                    ).toLocaleString("en-us")}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
+                  <p className="text-sm lg:text-base">Balance After</p>
+                  <p className="font-medium text-sm lg:text-base">
+                    ₦
+                    {parseFloat(
+                      selectedPayment?.balanceafter?.toFixed(2)
+                    ).toLocaleString("en-us")}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
                   <p className="text-sm lg:text-base">Create Time</p>
                   <p className="font-medium text-sm lg:text-base">
                     {dayjs(selectedPayment?.create_time).format(
-                      "YYYY-MM-DD HH:mm:ss"
-                    )}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Paid Amount</p>
-                  <p className="font-medium text-sm lg:text-base">
-                    ₦{selectedPayment?.paid_amount?.toLocaleString("en-us")}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Paid Time</p>
-                  <p className="font-medium text-sm lg:text-base">
-                    {dayjs(selectedPayment?.paid_time).format(
-                      "YYYY-MM-DD HH:mm:ss"
-                    )}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Notification Status</p>
-                  <p className="font-medium text-sm lg:text-base capitalize">
-                    {selectedPayment?.notification}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between py-1 lg:py-2 2xl:py-2.5">
-                  <p className="text-sm lg:text-base">Notification Time</p>
-                  <p className="font-medium text-sm lg:text-base">
-                    {dayjs(selectedPayment?.notification_time).format(
                       "YYYY-MM-DD HH:mm:ss"
                     )}
                   </p>
