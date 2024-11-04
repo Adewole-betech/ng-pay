@@ -15,7 +15,7 @@ import {
 } from "iconsax-react";
 import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, redirect } from "next/navigation";
 import { Avatar, Badge } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/features/auth/loginSlice";
@@ -26,7 +26,7 @@ export default function DashboardLayout({ children }) {
   const location = usePathname();
   const dispatch = useDispatch();
   const router = useRouter();
-  const { isLoggedIn } = useSelector(() => store.getState().login);
+  const { isLoggedIn, userLogin } = useSelector(() => store.getState().login);
   const [child, setChild] = useState(null);
 
   const paths = [
@@ -91,11 +91,11 @@ export default function DashboardLayout({ children }) {
       link: "/dashboard/balances",
       desc: "",
       children: [
-        {
-          link: "/dashboard/balances/history",
-          title: "Balance History",
-          desc: "Get an overview of your balance history.",
-        },
+        // {
+        //   link: "/dashboard/balances/history",
+        //   title: "Balance History",
+        //   desc: "Get an overview of your balance history.",
+        // },
         {
           link: "/dashboard/balances/settlement",
           title: "Settlement History",
@@ -191,12 +191,16 @@ export default function DashboardLayout({ children }) {
         <div className="flex p-4 lg:p-5 2xl:p-6 border-t border-t-neutral-200 justify-between items-center">
           <div className="flex items-center gap-3">
             <Badge dot color="green" size="large" offset={[-5, 35]}>
-              <Avatar className="size-8 2xl:size-10" />
+              <Avatar className="size-8 2xl:size-10">
+                <User />
+              </Avatar>
             </Badge>
             <div className="flex flex-col gap-0.5">
-              <p className="text-xs lg:text-sm font-medium">Temi Famuyiwa</p>
-              <p className="text-xs lg:text-sm text-neutral-500">
-                MERCHANT ID:NG1011
+              <p className="text-xs lg:text-sm font-medium capitalize">
+                {userLogin?.username}
+              </p>
+              <p className="text-xs lg:text-sm text-neutral-500 uppercase">
+                MERCHANT ID:{userLogin?.mchid}
               </p>
             </div>
           </div>
@@ -256,6 +260,6 @@ export default function DashboardLayout({ children }) {
       </div>
     </div>
   ) : (
-    router.push("/auth/login")
+    redirect("/auth/login")
   );
 }
