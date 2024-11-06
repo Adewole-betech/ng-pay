@@ -10,7 +10,6 @@ const Payout = ({ setSelectedClient, setCurrentPage }) => {
   const { payoutConf, payoutLoading } = useSelector(
     () => store.getState().client
   );
-  console.log(historyData);
   useEffect(() => {
     if (payoutConf) {
       setHistoryData(payoutConf?.results[0]);

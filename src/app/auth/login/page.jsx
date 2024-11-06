@@ -124,7 +124,6 @@ export default function Login() {
               type="checkbox"
               name="remember"
               id="remember"
-              required
               className="accent-primary-main w-6 h-6 rounded-xl outline-1 lg:outline-[1.5px] outline-neutral-300"
             />
             <span className="">Remember me</span>

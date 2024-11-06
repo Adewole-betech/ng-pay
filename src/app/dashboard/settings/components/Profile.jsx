@@ -1,7 +1,23 @@
 import { Button, DatePicker, Form, Input, InputNumber, Select } from "antd";
+import dayjs from "dayjs";
+import { useEffect } from "react";
 
-const Profile = () => {
+const Profile = ({ userProfile }) => {
   const [profileForm] = Form.useForm();
+  console.log(userProfile);
+
+  useEffect(() => {
+    if (userProfile) {
+      profileForm.setFieldsValue({
+        username: userProfile?.username,
+        status: userProfile?.status,
+        roles: userProfile?.roles,
+        createtime: userProfile?.createtime
+          ? dayjs(userProfile?.createtime)
+          : "",
+      });
+    }
+  }, [userProfile]);
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
       <div className="md:col-span-4 2xl:col-span-5 flex flex-col gap-0.5 md:gap-1">
@@ -18,8 +34,8 @@ const Profile = () => {
           className="px-4 lg:px-5 2xl:px-6 text-left grid grid-cols-1 md:grid-cols-2 gap-x-3 lg:gap-x-4 2xl:gap-x-5"
         >
           <Form.Item
-            label="Full Name"
-            name={"full_name"}
+            label="Username"
+            name={"username"}
             rules={
               [
                 //   {
@@ -93,7 +109,7 @@ const Profile = () => {
           </Form.Item>
           <Form.Item
             label="Role"
-            name={"role"}
+            name={"roles"}
             rules={[
               {
                 required: true,
@@ -131,13 +147,15 @@ const Profile = () => {
           </Form.Item>
           <Form.Item
             label="Create Time"
-            name={"create_time"}
+            name={"createtime"}
             className="col-span-full"
           >
             <DatePicker
               placeholder="Enter a note"
               className="w-full"
               size="large"
+              format={"DD/MM/YYYY"}
+              disabled
             />
           </Form.Item>
           <Form.Item className="col-span-full">
