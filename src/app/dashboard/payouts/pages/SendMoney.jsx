@@ -4,7 +4,7 @@ import Account from "./components/Account";
 import Amount from "./components/Amount";
 import Confirmation from "./components/Confirmation";
 
-const SendMoney = ({ setCurrentPage }) => {
+const SendMoney = () => {
   const [current, setCurrent] = useState(0);
   return (
     <div className="flex flex-col md:flex-row w-full md:w-[90%] lg:w-4/5 2xl:w-3/5 md:justify-between">
@@ -62,7 +62,7 @@ const SendMoney = ({ setCurrentPage }) => {
         />
       </div>
       {current === 0 && (
-        <Account setCurrentStep={setCurrent} setCurrentPage={setCurrentPage} />
+        <Account setCurrentStep={setCurrent} />
       )}
       {current === 1 && <Amount setCurrentStep={setCurrent} />}
       {current === 2 && <Confirmation setCurrentStep={setCurrent} />}

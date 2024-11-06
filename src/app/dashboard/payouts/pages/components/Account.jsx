@@ -29,7 +29,7 @@ const beneficiaries = [
   },
 ];
 
-const Account = ({ setCurrentStep, setCurrentPage }) => {
+const Account = ({ setCurrentStep }) => {
   const [accountForm] = Form.useForm();
 
   const onFinish = (values) => {
@@ -118,7 +118,7 @@ const Account = ({ setCurrentStep, setCurrentPage }) => {
       </div>
       <Form.Item>
         <div className="flex w-full justify-end gap-2 lg:gap-3">
-          <Button onClick={() => setCurrentPage("payout")} className="">
+          <Button onClick={() => accountForm.resetFields()} className="">
             Cancel
           </Button>
           <Button htmlType="submit" type="primary">

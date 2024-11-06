@@ -28,7 +28,7 @@ import {
   SearchNormal1,
   Wallet3,
 } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { historyTable, historyTableColumns } from "./data";
 import Column from "antd/es/table/Column";
@@ -62,6 +62,7 @@ import {
   getBalancesHistory,
   setBalanceHistoryColumns,
 } from "@/app/redux/features/balance/history";
+import { PageContext } from "../../layout";
 
 const { RangePicker } = DatePicker;
 
@@ -218,6 +219,11 @@ export default function History() {
       direction: overIndex > activeIndex ? "right" : "left",
     });
   };
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   useEffect(() => {
     if (columns) {

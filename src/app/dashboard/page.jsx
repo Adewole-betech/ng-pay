@@ -1,11 +1,12 @@
 "use client";
 
 // import { LineChart } from "@tremor/react";
-import { Avalanche, Eye, EyeSlash, Wallet3 } from "iconsax-react";
-import { useState } from "react";
+import { Eye, EyeSlash, Wallet3 } from "iconsax-react";
+import { useContext, useEffect, useState } from "react";
 import { chartdata } from "./data";
 import { DatePicker, Spin } from "antd";
 import ReactApexChart from "react-apexcharts";
+import { PageContext } from "./layout";
 
 const filters = [
   { title: "Today", filter: "today" },
@@ -21,6 +22,12 @@ export default function Dashboard() {
   const [showAvailable, setShowAvailable] = useState(true);
   const [showUnsettled, setShowUnsettled] = useState(true);
   const [showLast, setShowLast] = useState(true);
+
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
@@ -157,7 +164,7 @@ export default function Dashboard() {
                         labels: chartdata?.map((usage) => usage?.date),
                         stroke: {
                           width: [0, 2],
-                          curve: "smooth"
+                          curve: "smooth",
                         },
                         markers: {
                           size: [0, 0],
@@ -211,12 +218,10 @@ export default function Dashboard() {
                           data: chartdata?.map((usage) => usage?.Value),
                           type: "line",
                           name: "Value",
-                          
                         },
                       ]}
                       type="line"
                       height={500}
-                      
                     />
                   </div>
                 </Spin>
@@ -251,7 +256,7 @@ export default function Dashboard() {
                         labels: chartdata?.map((usage) => usage?.date),
                         stroke: {
                           width: [0, 2],
-                          curve: "smooth"
+                          curve: "smooth",
                         },
                         markers: {
                           size: [0, 0],

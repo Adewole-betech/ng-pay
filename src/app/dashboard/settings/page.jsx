@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Profile from "./components/Profile";
 import BusinessInformation from "./components/Business";
 import Passwords from "./components/Passwords";
@@ -12,6 +12,7 @@ import Recharge from "./components/Recharge";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import { getClientPayout, getClientsList } from "@/app/redux/features/clients";
+import { PageContext } from "../layout";
 
 export default function Settings() {
   const dispatch = useDispatch();
@@ -23,6 +24,12 @@ export default function Settings() {
   const { payoutConf, clientsList } = useSelector(
     () => store.getState().client
   );
+
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   useEffect(() => {
     dispatch(

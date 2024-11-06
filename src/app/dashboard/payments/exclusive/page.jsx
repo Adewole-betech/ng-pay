@@ -14,7 +14,7 @@ import {
   SearchNormal1,
   Trash,
 } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { exclusiveTable, exclusiveTableColumns } from "./data";
 import Column from "antd/es/table/Column";
@@ -47,6 +47,7 @@ import {
   setExclusiveColumns,
 } from "@/app/redux/features/payments/exclusive";
 import Filter from "./Filter";
+import { PageContext } from "../../layout";
 
 export default function Exclusive() {
   const dispatch = useDispatch();
@@ -95,7 +96,6 @@ export default function Exclusive() {
       })
     );
   }
-
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -201,6 +201,12 @@ export default function Exclusive() {
       direction: overIndex > activeIndex ? "right" : "left",
     });
   };
+
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   useEffect(() => {
     if (columns) {

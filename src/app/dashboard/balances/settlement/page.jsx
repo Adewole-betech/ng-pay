@@ -17,7 +17,7 @@ import {
   Refresh,
   Wallet3,
 } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { historyTable, historyTableColumns } from "./data";
 import Column from "antd/es/table/Column";
@@ -48,6 +48,7 @@ import PaymentInformation from "./PaymentInformation";
 import Filter from "./Filter";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { setBalanceSettlementColumns } from "@/app/redux/features/balance/settlement";
+import { PageContext } from "../../layout";
 
 const { RangePicker } = DatePicker;
 
@@ -73,7 +74,6 @@ export default function Settlement() {
   function handleFilter() {
     setShowFilter(!showFilter);
   }
-
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -183,6 +183,12 @@ export default function Settlement() {
       direction: overIndex > activeIndex ? "right" : "left",
     });
   };
+
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   useEffect(() => {
     if (columns) {

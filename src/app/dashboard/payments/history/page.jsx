@@ -13,7 +13,7 @@ import {
   Refresh,
   SearchNormal1,
 } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { historyTable, historyTableColumns } from "./data";
 import Column from "antd/es/table/Column";
@@ -47,6 +47,7 @@ import {
 } from "@/app/redux/features/payments/history";
 import Filter from "./Filter";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { PageContext } from "../../layout";
 
 export default function History() {
   const dispatch = useDispatch();
@@ -95,7 +96,6 @@ export default function History() {
       })
     );
   }
-
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -201,6 +201,12 @@ export default function History() {
       direction: overIndex > activeIndex ? "right" : "left",
     });
   };
+
+  const setDescription = useContext(PageContext);
+
+  useEffect(() => {
+    setDescription({ page: "", link: "", action: null });
+  }, []);
 
   useEffect(() => {
     if (columns) {
