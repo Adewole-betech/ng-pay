@@ -1,7 +1,7 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
 import { useEffect } from "react";
 
-const Payin = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
+const Payin = ({ selectedClient, setSelectedClient }) => {
   const [payinForm] = Form.useForm();
 
   useEffect(() => {
@@ -152,8 +152,7 @@ const Payin = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
             <div className="flex items-center justify-end gap-2 lg:gap-3">
               <Button
                 onClick={() => {
-                  setSelectedClient(null);
-                  setCurrentPage("dashboard");
+                  payinForm.resetFields();
                 }}
                 size="large"
               >

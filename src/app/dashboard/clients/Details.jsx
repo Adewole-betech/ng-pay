@@ -7,11 +7,7 @@ import Payin from "./components/Payin";
 import Password from "./components/Password";
 import Payout from "./components/Payout";
 
-const ClientDetails = ({
-  selectedClient,
-  setSelectedClient,
-  setCurrentPage,
-}) => {
+const ClientDetails = ({ selectedClient, setSelectedClient }) => {
   const [tab, setTab] = useState("details");
   return (
     <>
@@ -29,28 +25,24 @@ const ClientDetails = ({
         <Details
           selectedClient={selectedClient}
           setSelectedClient={setSelectedClient}
-          setCurrentPage={setCurrentPage}
         />
       )}
       {tab === "payin" && (
         <Payin
           selectedClient={selectedClient}
           setSelectedClient={setSelectedClient}
-          setCurrentPage={setCurrentPage}
         />
       )}
       {tab === "payout" && (
         <Payout
           selectedClient={selectedClient}
           setSelectedClient={setSelectedClient}
-          setCurrentPage={setCurrentPage}
         />
       )}
       {tab === "reset" && (
         <Password
           selectedClient={selectedClient}
           setSelectedClient={setSelectedClient}
-          setCurrentPage={setCurrentPage}
         />
       )}
     </>

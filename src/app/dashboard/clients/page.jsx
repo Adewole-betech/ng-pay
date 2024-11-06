@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import ClientsPage from "./Clients";
 import ClientDetails from "./Details";
 import { getClientPayout } from "@/app/redux/features/clients";
+import { PageContext } from "../layout";
 
 export default function Clients() {
   const dispatch = useDispatch();
+  const setDescription = useContext(PageContext);
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [selectedClient, setSelectedClient] = useState(null);
   const [showNew, setShowNew] = useState(false);
@@ -24,6 +26,22 @@ export default function Clients() {
     }
   }, [selectedClient]);
 
+  function changePage() {
+    setCurrentPage("dashboard");
+  }
+
+  useEffect(() => {
+    if (currentPage === "dashboard") {
+      setDescription({ page: "", link: "", action: null });
+    } else if (currentPage === "details") {
+      setDescription({
+        page: selectedClient?.name,
+        link: "Clients",
+        action: changePage,
+      });
+    }
+  }, [currentPage]);
+
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">
       <div className="bg-white p-4 2xl:p-6 rounded-xl 2xl:rounded-2xl flex flex-col gap-4 2xl:gap-5 h-full">
@@ -39,7 +57,6 @@ export default function Clients() {
           )}
           {currentPage === "details" && (
             <ClientDetails
-              setCurrentPage={setCurrentPage}
               selectedClient={selectedClient}
               setSelectedClient={setSelectedClient}
             />

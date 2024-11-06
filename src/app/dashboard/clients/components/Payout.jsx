@@ -3,7 +3,7 @@ import { Button, Form, Input, InputNumber, Select, Switch } from "antd";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-const Payout = ({ setSelectedClient, setCurrentPage }) => {
+const Payout = ({ setSelectedClient }) => {
   const [payoutForm] = Form.useForm();
   const [historyData, setHistoryData] = useState(null);
 
@@ -332,8 +332,7 @@ const Payout = ({ setSelectedClient, setCurrentPage }) => {
               <Button
                 size="large"
                 onClick={() => {
-                  setSelectedClient(null);
-                  setCurrentPage("dashboard");
+                  payoutForm.resetFields();
                 }}
               >
                 Cancel

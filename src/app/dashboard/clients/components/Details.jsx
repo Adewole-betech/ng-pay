@@ -1,6 +1,6 @@
 import { Button, Form, Input, Select } from "antd";
 
-const Details = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
+const Details = ({ selectedClient, setSelectedClient }) => {
   const [detailsForm] = Form.useForm();
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
@@ -132,8 +132,7 @@ const Details = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
             <div className="flex items-center justify-end gap-2 lg:gap-3">
               <Button
                 onClick={() => {
-                  setSelectedClient(null);
-                  setCurrentPage("dashboard");
+                  detailsForm.resetFields();
                 }}
                 size="large"
               >
