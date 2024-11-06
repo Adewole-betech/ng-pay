@@ -20,41 +20,13 @@ export const fetchSignUp = createAsyncThunk(
   "signUp/fetchSignUp",
   async ({ data }) => {
     return axios
-      .post(`${BASE_URL}/api/client-user/`, data, {
+      .post(`${BASE_URL}/api/client/user/`, data, {
         headers: {
           'content-type': 'multipart/form-data'
         },
       })
       .then((response) => response.data)
       .catch((error) => error.response.data);
-  }
-);
-
-export const signUpOtp = createAsyncThunk(
-  "signUp/signUpOtp",
-  async (data) => {
-    return axios
-      .post(`${BASE_URL}/VerifyEmail/`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error.response?.data);
-  }
-);
-
-export const resendOtp = createAsyncThunk(
-  "signUp/resendOtp",
-  async (data) => {
-    return axios
-      .post(`${BASE_URL}/api/UsersAuths/ResendOTP/`, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => response.data)
-      .catch((error) => error.response?.data);
   }
 );
 

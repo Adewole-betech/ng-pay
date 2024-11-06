@@ -1,6 +1,6 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
 
-const Payin = ({ selectedClient }) => {
+const Payin = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
   const [payinForm] = Form.useForm();
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
@@ -15,11 +15,19 @@ const Payin = ({ selectedClient }) => {
           layout="vertical"
           autoComplete="off"
           form={payinForm}
+          initialValues={{
+            rate: selectedClient?.rate,
+            min: selectedClient?.min,
+            max: selectedClient?.max,
+            fix: selectedClient?.fix,
+            prefergw: selectedClient?.prefergw,
+            settle_period: selectedClient?.settle_period ?? "T1",
+          }}
           className="px-4 lg:px-5 2xl:px-6 pt-6 lg:pt-8 2xl:pt-10 text-left grid grid-cols-1 md:grid-cols-2 gap-x-3 lg:gap-x-4 2xl:gap-x-5"
         >
           <Form.Item
             label="Payin Rate"
-            name={"payin_rate"}
+            name={"rate"}
             rules={
               [
                 //   {
@@ -34,7 +42,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Payin"
-            name={"minimum_payin"}
+            name={"min"}
             rules={[
               //   {
               //     required: true,
@@ -52,7 +60,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Payin"
-            name={"maximum_payin"}
+            name={"max"}
             rules={[
               //   {
               //     required: true,
@@ -70,7 +78,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Payin"
-            name={"fixed_payin"}
+            name={"fix"}
             rules={[
               //   {
               //     required: true,
@@ -89,7 +97,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Payment Gateway"
-            name={"gateway"}
+            name={"prefergw"}
             // rules={[
             //   {
             //     required: true,
@@ -98,22 +106,21 @@ const Payin = ({ selectedClient }) => {
             // ]}
             className="col-span-full"
           >
-            <Select
+            <Input
               size="large"
-              placeholder="Select payment gateway"
+              placeholder="Enter payment gateway"
               className="w-full"
             />
           </Form.Item>
           <Form.Item
             label="Settled Period"
-            name={"settled_period"}
+            name={"settle_period"}
             // rules={[
             //   {
             //     required: true,
             //     message: "Please select settled period!",
             //   },
             // ]}
-            initialValue={"T1"}
             className="col-span-full"
           >
             <Select
@@ -129,7 +136,15 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item className="col-span-full">
             <div className="flex items-center justify-end gap-2 lg:gap-3">
-              <Button size="large">Cancel</Button>
+              <Button
+                onClick={() => {
+                  setSelectedClient(null);
+                  setCurrentPage("dashboard");
+                }}
+                size="large"
+              >
+                Cancel
+              </Button>
               <Button size="large" type="primary" htmlType="submit">
                 Save Changes
               </Button>

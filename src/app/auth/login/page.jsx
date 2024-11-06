@@ -48,7 +48,6 @@ export default function Login() {
   return (
     <Form
       onFinish={onSubmit}
-
       className="bg-white p-6 2xl:p-8 flex flex-col items-center gap-8 rounded-xl lg:rounded-2xl"
     >
       <div className="flex flex-col gap-6 items-center">
@@ -143,7 +142,7 @@ export default function Login() {
         htmlType="submit"
         size="large"
         className="w-full"
-        loading={loading}
+        loading={loading || isLoggedIn}
         primary
       >
         Log in

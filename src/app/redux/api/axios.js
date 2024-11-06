@@ -31,7 +31,7 @@ export const createAuthInterceptor = (instance, store) => {
         originalRequest._retry = true;
         try {
           const refreshResponse = await axios.post(
-            `${BASE_URL}/api/client-user/token/refresh/`,
+            `${BASE_URL}/api/client/token/refresh/`,
             {
               refresh: refreshToken,
             },

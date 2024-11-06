@@ -1,6 +1,6 @@
 import { Button, Form, Input, Select } from "antd";
 
-const Details = ({ selectedClient }) => {
+const Details = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
   const [detailsForm] = Form.useForm();
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
@@ -15,6 +15,14 @@ const Details = ({ selectedClient }) => {
           layout="vertical"
           autoComplete="off"
           form={detailsForm}
+          initialValues={{
+            client_id: selectedClient?.mchid ?? "",
+            client_name: selectedClient?.name ?? "",
+            role: selectedClient?.role ?? "",
+            merchant_type: selectedClient?.merchant_type ?? "",
+            status: selectedClient?.status ?? "",
+            notes: selectedClient?.notes ?? "",
+          }}
           className="px-4 lg:px-5 2xl:px-6 pt-6 lg:pt-8 2xl:pt-10 text-left"
         >
           <Form.Item
@@ -122,8 +130,16 @@ const Details = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item>
             <div className="flex items-center justify-end gap-2 lg:gap-3">
-              <Button>Cancel</Button>
-              <Button type="primary" htmlType="submit">
+              <Button
+                onClick={() => {
+                  setSelectedClient(null);
+                  setCurrentPage("dashboard");
+                }}
+                size="large"
+              >
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" size="large">
                 Save Changes
               </Button>
             </div>

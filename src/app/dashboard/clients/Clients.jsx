@@ -25,7 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
-import { setClientColumns } from "@/app/redux/features/clients";
+import { getClientsList, setClientColumns } from "@/app/redux/features/clients";
 import Column from "antd/es/table/Column";
 import NewClient from "./components/NewClient";
 
@@ -40,6 +40,15 @@ const ClientsPage = ({
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
+  const [historyData, setHistoryData] = useState(null);
+  const [status, setStatus] = useState("");
+  const [merchant, setMerchant] = useState("");
+
+  let timeoutId;
+
+  const { clientColumns, listLoading, clientsList } = useSelector(
+    () => store.getState().client
+  );
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -47,13 +56,15 @@ const ClientsPage = ({
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={loading}
+          loading={listLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
-          className="h-10"
+          className="h-10 hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
           type="text"
-        ></Button>
+        >
+          Previous
+        </Button>
       );
     }
     if (type === "next") {
@@ -61,20 +72,22 @@ const ClientsPage = ({
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={loading}
+          loading={listLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
-          className="h-10"
+          className="h-10 hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
           type="text"
-        ></Button>
+        >
+          Next
+        </Button>
       );
     }
     if (type === "page") {
       return (
         <div
           onClick={() => setPage(parseInt(pag))}
-          className="flex justify-center items-center h-full"
+          className="flex justify-center items-center h-full hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
         >
           {originalElement}
         </div>
@@ -83,7 +96,16 @@ const ClientsPage = ({
     return originalElement;
   };
 
-  const { clientColumns } = useSelector(() => store.getState().client);
+  function loadData() {
+    dispatch(
+      getClientsList({
+        page: page,
+        page_size: size,
+        status: status,
+        mchid: merchant,
+      })
+    );
+  }
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -150,6 +172,17 @@ const ClientsPage = ({
     }
   }, [columns]);
 
+  useEffect(() => {
+    if (clientsList) {
+      setTotal(clientsList?.count);
+      setHistoryData(clientsList?.results);
+    }
+  }, [clientsList]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size, status, merchant]);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -179,7 +212,7 @@ const ClientsPage = ({
               <Table
                 className="no-scrollbar"
                 bordered
-                dataSource={clientTable}
+                dataSource={historyData}
                 components={{
                   header: {
                     cell: TableHeaderCell,
@@ -192,7 +225,7 @@ const ClientsPage = ({
                 scroll={{
                   y: 800,
                 }}
-                // loading={loading}
+                loading={listLoading}
                 pagination={{
                   pageSize: size,
                   itemRender: itemRender,
@@ -243,7 +276,7 @@ const ClientsPage = ({
                     title={column?.title}
                     onHeaderCell={column?.onHeaderCell}
                     render={(value, record, _) => {
-                      if (column?.dataIndex === "client_id") {
+                      if (column?.dataIndex === "mchid") {
                         return <p className="font-medium uppercase">{value}</p>;
                       } else if (column?.dataIndex === "status") {
                         return (
@@ -290,17 +323,20 @@ const ClientsPage = ({
                             </Tooltip>
                           </Space>
                         );
-                      } else if (column?.dataIndex === "date_added") {
+                      } else if (column?.dataIndex === "createtime") {
                         return (
                           <p className="capitalize">
                             {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
                           </p>
                         );
-                      } else if (column?.dataIndex.includes("balance")) {
+                      } else if (
+                        column?.dataIndex.includes("balance") ||
+                        column?.dataIndex.includes("availability")
+                      ) {
                         return (
                           <p className="font-medium text-xs lg:text-sm">
                             ₦
-                            {parseFloat(value.toFixed(2)).toLocaleString(
+                            {parseFloat(value?.toFixed(2)).toLocaleString(
                               "en-us"
                             )}
                           </p>

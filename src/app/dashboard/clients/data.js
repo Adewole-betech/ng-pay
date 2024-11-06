@@ -102,8 +102,8 @@ export const clientTable = [
 
 export const clientTableColumns = [
   {
-    key: "client_id",
-    dataIndex: "client_id",
+    key: "mchid",
+    dataIndex: "mchid",
     title: "Client ID",
     width: 120,
     hidden: false,
@@ -123,29 +123,29 @@ export const clientTableColumns = [
     hidden: false,
   },
   {
-    key: "available_balance",
-    dataIndex: "available_balance",
+    key: "availability",
+    dataIndex: "availability",
     title: "Available Balance",
     width: 150,
     hidden: false,
   },
   {
-    key: "unsettled_balance",
-    dataIndex: "unsettled_balance",
+    key: "balance",
+    dataIndex: "balance",
     title: "Unsettled Balance",
     width: 150,
     hidden: false,
   },
   {
-    key: "preferred_gateway",
-    dataIndex: "preferred_gateway",
+    key: "prefergw",
+    dataIndex: "prefergw",
     title: "Preferred Gateway",
     width: 150,
     hidden: false,
   },
   {
-    key: "date_added",
-    dataIndex: "date_added",
+    key: "createtime",
+    dataIndex: "createtime",
     title: "Date Added",
     width: 120,
     hidden: false,

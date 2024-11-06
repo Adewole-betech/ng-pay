@@ -1,6 +1,6 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
 
-const Password = ({ selectedClient }) => {
+const Password = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
   const [passwordForm] = Form.useForm();
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
@@ -53,7 +53,15 @@ const Password = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item className="col-span-full">
             <div className="flex items-center justify-end gap-2 lg:gap-3">
-              <Button size="large">Cancel</Button>
+              <Button
+                size="large"
+                onClick={() => {
+                  setSelectedClient(null);
+                  setCurrentPage("dashboard");
+                }}
+              >
+                Cancel
+              </Button>
               <Button size="large" type="primary" htmlType="submit">
                 Save Changes
               </Button>

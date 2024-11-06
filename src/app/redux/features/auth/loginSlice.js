@@ -17,7 +17,7 @@ export const loginAuth = createAsyncThunk(
   "login/loginAuth",
   async (data, { dispatch }) => {
     return axios
-      .post(`${BASE_URL}/api/client-user/Login/`, data, {
+      .post(`${BASE_URL}/api/client/user/Login/`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

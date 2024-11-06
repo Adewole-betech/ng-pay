@@ -113,19 +113,22 @@ export default function History() {
     );
   }
 
+
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
       return (
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={historyLoading}
+          loading={listLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
-          className="h-10"
+          className="h-10 hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
           type="text"
-        ></Button>
+        >
+          Previous
+        </Button>
       );
     }
     if (type === "next") {
@@ -133,20 +136,22 @@ export default function History() {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={historyLoading}
+          loading={listLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
-          className="h-10"
+          className="h-10 hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
           type="text"
-        ></Button>
+        >
+          Next
+        </Button>
       );
     }
     if (type === "page") {
       return (
         <div
           onClick={() => setPage(parseInt(pag))}
-          className="flex justify-center items-center h-full"
+          className="flex justify-center items-center h-full hover:!bg-transparent hover:!text-primary-main disabled:hover:!text-inherit"
         >
           {originalElement}
         </div>

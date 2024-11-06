@@ -1,13 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import ClientsPage from "./Clients";
 import ClientDetails from "./Details";
+import { getClientPayout } from "@/app/redux/features/clients";
 
 export default function Clients() {
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [selectedClient, setSelectedClient] = useState(null);
   const [showNew, setShowNew] = useState(false);
+
+  useEffect(() => {
+    if (selectedClient) {
+      dispatch(
+        getClientPayout({
+          page: 1,
+          page_size: 10,
+          mchid: selectedClient?.mchid,
+        })
+      );
+    }
+  }, [selectedClient]);
 
   return (
     <div className="flex flex-col gap-2 md:gap-4 2xl:gap-6 h-full">

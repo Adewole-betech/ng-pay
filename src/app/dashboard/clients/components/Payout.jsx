@@ -1,12 +1,57 @@
+import store from "@/app/redux/store/store";
 import { Button, Form, Input, InputNumber, Select, Switch } from "antd";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
-const Payout = ({ selectedClient }) => {
+const Payout = ({ setSelectedClient, setCurrentPage }) => {
   const [payoutForm] = Form.useForm();
+  const [historyData, setHistoryData] = useState(null);
+
+  const { payoutConf, payoutLoading } = useSelector(
+    () => store.getState().client
+  );
+  console.log(historyData);
+  useEffect(() => {
+    if (payoutConf) {
+      setHistoryData(payoutConf?.results[0]);
+    }
+  }, [payoutConf]);
+
+  useEffect(() => {
+    if (historyData) {
+      payoutForm.setFieldsValue({
+        rate: historyData?.rate,
+        min: historyData?.min,
+        max: historyData?.max,
+        fix: historyData?.fix,
+        rechargaccount: historyData?.rechargaccount,
+        rechargeaccname: historyData?.rechargeaccname,
+        rechargebank: historyData?.rechargebank,
+        recharge_min: historyData?.recharge_min,
+        recharge_max: historyData?.recharge_max,
+        recharge_fix: historyData?.recharge_fix,
+        recharge_rate: historyData?.recharge_rate,
+      });
+    }
+  }, [historyData]);
   return (
     <Form
       layout="vertical"
       autoComplete="off"
       form={payoutForm}
+      initialValues={{
+        rate: historyData?.rate,
+        min: historyData?.min,
+        max: historyData?.max,
+        fix: historyData?.fix,
+        rechargaccount: historyData?.rechargaccount,
+        rechargeaccname: historyData?.rechargeaccname,
+        rechargebank: historyData?.rechargebank,
+        recharge_min: historyData?.recharge_min,
+        recharge_max: historyData?.recharge_max,
+        recharge_fix: historyData?.recharge_fix,
+        recharge_rate: historyData?.recharge_rate,
+      }}
       className="px-4 lg:px-5 2xl:px-6 text-left"
     >
       <div className=" flex flex-col gap-3 md:grid md:grid-cols-12 py-2 lg:py-3 2xl:py-4 border-b border-b-[#EAECF0]">
@@ -21,7 +66,7 @@ const Payout = ({ selectedClient }) => {
         <div className="md:col-span-7 2xl:col-span-6 ">
           <Form.Item
             label="Maximum Payout"
-            name={"max_payout"}
+            name={"max"}
             rules={
               [
                 //   {
@@ -57,7 +102,7 @@ const Payout = ({ selectedClient }) => {
         <div className="md:col-span-7 2xl:col-span-6 grid grid-cols-2 gap-x-3 lg:gap-x-4 2xl:gap-x-5">
           <Form.Item
             label="Payout Rate"
-            name={"payout_rate"}
+            name={"rate"}
             rules={
               [
                 //   {
@@ -72,7 +117,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Payout"
-            name={"minimum_payout"}
+            name={"min"}
             rules={[
               //   {
               //     required: true,
@@ -90,7 +135,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Payout"
-            name={"maximum_payout"}
+            name={"max"}
             rules={[
               //   {
               //     required: true,
@@ -108,7 +153,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Payout"
-            name={"fixed_payout"}
+            name={"fix"}
             rules={[
               //   {
               //     required: true,
@@ -135,7 +180,9 @@ const Payout = ({ selectedClient }) => {
           </p>
         </div>
         <div className="md:col-span-7 2xl:col-span-6 flex gap-3 lg:gap-4 2xl:gap-5">
-          <Button className="w-full" type="primary">Reset</Button>
+          <Button className="w-full" type="primary">
+            Reset
+          </Button>
           <Button className="w-fit">Copy</Button>
         </div>
       </div>
@@ -149,7 +196,7 @@ const Payout = ({ selectedClient }) => {
         <div className="md:col-span-7 2xl:col-span-6 ">
           <Form.Item
             label="Account Number"
-            name={"account_number"}
+            name={"rechargaccount"}
             rules={
               [
                 //   {
@@ -169,7 +216,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Account Name"
-            name={"account_name"}
+            name={"rechargeaccname"}
             rules={
               [
                 //   {
@@ -188,7 +235,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Bank Name"
-            name={"bank_name"}
+            name={"rechargebank"}
             rules={
               [
                 //   {
@@ -228,7 +275,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Recharge"
-            name={"minimum_recharge"}
+            name={"recharge_min"}
             rules={[
               //   {
               //     required: true,
@@ -246,7 +293,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Recharge"
-            name={"maximum_recharge"}
+            name={"recharge_max"}
             rules={[
               //   {
               //     required: true,
@@ -264,7 +311,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Recharge"
-            name={"fixed_recharge"}
+            name={"recharge_fix"}
             rules={[
               //   {
               //     required: true,
@@ -283,7 +330,15 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item className="col-span-full">
             <div className="flex items-center justify-end gap-2 lg:gap-3">
-              <Button size="large">Cancel</Button>
+              <Button
+                size="large"
+                onClick={() => {
+                  setSelectedClient(null);
+                  setCurrentPage("dashboard");
+                }}
+              >
+                Cancel
+              </Button>
               <Button size="large" type="primary" htmlType="submit">
                 Save Changes
               </Button>

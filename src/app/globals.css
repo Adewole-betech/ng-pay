@@ -64,3 +64,57 @@ div.ant-picker-dropdown,
 .szh-menu-container {
   z-index: 10001;
 }
+
+ul.ant-table-pagination {
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  justify-self: center;
+}
+
+li.ant-pagination-prev,
+li.ant-pagination-next {
+  height: 100% !important;
+}
+
+li.ant-pagination-prev {
+  margin-right: auto !important;
+}
+
+li.ant-pagination-next {
+  margin-left: auto !important;
+}
+
+li.ant-pagination-disabled > button,
+li.ant-pagination-disabled {
+  cursor: not-allowed !important;
+}
+
+li.ant-pagination-item:hover {
+  background-color: transparent !important;
+  color: rgba(75, 78, 252, 1) !important;
+}
+
+li.ant-pagination-item-active {
+  background-color: rgba(245, 245, 255, 0.5) !important;
+  color: rgba(75, 78, 252, 1) !important;
+  border-radius: 6px !important;
+}
+
+@media screen and (min-width: 500px) {
+  ul.ant-table-pagination {
+    width: 70%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  ul.ant-table-pagination {
+    width: 60%;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  ul.ant-table-pagination {
+    width: 40%;
+  }
+}

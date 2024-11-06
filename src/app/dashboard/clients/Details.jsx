@@ -25,10 +25,34 @@ const ClientDetails = ({
           { key: "reset", label: "Reset Password" },
         ]}
       />
-      {tab === "details" && <Details selectedClient={selectedClient} />}
-      {tab === "payin" && <Payin selectedClient={selectedClient} />}
-      {tab === "payout" && <Payout selectedClient={selectedClient} />}
-      {tab === "reset" && <Password selectedClient={selectedClient} />}
+      {tab === "details" && (
+        <Details
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
+      {tab === "payin" && (
+        <Payin
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
+      {tab === "payout" && (
+        <Payout
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
+      {tab === "reset" && (
+        <Password
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </>
   );
 };
