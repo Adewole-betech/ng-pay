@@ -75,22 +75,22 @@ export const teamsTable = [
 
 export const teamsTableColumns = [
   {
-    key: "name",
-    dataIndex: "name",
+    key: "username",
+    dataIndex: "username",
     title: "Name",
     width: 300,
     hidden: false,
   },
   {
-    key: "role",
-    dataIndex: "role",
+    key: "roles",
+    dataIndex: "roles",
     title: "Role",
     width: 100,
     hidden: false,
   },
   {
-    key: "date_added",
-    dataIndex: "date_added",
+    key: "createtime",
+    dataIndex: "createtime",
     title: "Date Added",
     width: 120,
     hidden: false,

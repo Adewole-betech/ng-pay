@@ -1,7 +1,23 @@
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { Form, InputNumber, Select } from "antd";
+import { useEffect } from "react";
 
-const Payin = ({ selectedClient }) => {
+const Payin = ({ payinConf }) => {
   const [payinForm] = Form.useForm();
+  console.log(payinConf);
+
+  useEffect(() => {
+    if (payinConf) {
+      payinForm.setFieldsValue({
+        rate: payinConf?.rate,
+        min: payinConf?.min,
+        max: payinConf?.max,
+        fix: payinConf?.fix,
+        prefergw: payinConf?.prefergw,
+        settle_period: payinConf?.settle_period ?? "T1",
+      });
+    }
+  }, [payinConf]);
+
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
       <div className="md:col-span-4 2xl:col-span-5 flex flex-col gap-0.5 md:gap-1">
@@ -20,7 +36,7 @@ const Payin = ({ selectedClient }) => {
         >
           <Form.Item
             label="Payin Rate"
-            name={"payin_rate"}
+            name={"rate"}
             rules={
               [
                 //   {
@@ -35,7 +51,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Payin"
-            name={"minimum_payin"}
+            name={"min"}
             rules={[
               //   {
               //     required: true,
@@ -53,7 +69,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Payin"
-            name={"maximum_payin"}
+            name={"max"}
             rules={[
               //   {
               //     required: true,
@@ -71,7 +87,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Payin"
-            name={"fixed_payin"}
+            name={"fix"}
             rules={[
               //   {
               //     required: true,
@@ -90,7 +106,7 @@ const Payin = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Settled Period"
-            name={"settled_period"}
+            name={"settle_period"}
             // rules={[
             //   {
             //     required: true,

@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 const Profile = ({ userProfile }) => {
   const [profileForm] = Form.useForm();
-  console.log(userProfile);
 
   useEffect(() => {
     if (userProfile) {

@@ -1,7 +1,22 @@
-import { Button, Form, Input, InputNumber, Select, Switch } from "antd";
+import { Form, Input, InputNumber, Select } from "antd";
+import { useEffect } from "react";
 
-const Recharge = ({ selectedClient }) => {
+const Recharge = ({ payoutConf }) => {
   const [rechargeForm] = Form.useForm();
+
+  useEffect(() => {
+    if (payoutConf) {
+      rechargeForm.setFieldsValue({
+        rechargaccount: payoutConf?.rechargaccount,
+        rechargeaccname: payoutConf?.rechargeaccname,
+        rechargebank: payoutConf?.rechargebank,
+        recharge_min: payoutConf?.recharge_min,
+        recharge_max: payoutConf?.recharge_max,
+        recharge_fix: payoutConf?.recharge_fix,
+        recharge_rate: payoutConf?.recharge_rate,
+      });
+    }
+  }, [payoutConf]);
   return (
     <Form
       layout="vertical"
@@ -20,7 +35,7 @@ const Recharge = ({ selectedClient }) => {
         <div className="md:col-span-7 2xl:col-span-6 ">
           <Form.Item
             label="Account Number"
-            name={"account_number"}
+            name={"rechargaccount"}
             rules={
               [
                 //   {
@@ -40,7 +55,7 @@ const Recharge = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Account Name"
-            name={"account_name"}
+            name={"rechargeaccname"}
             rules={
               [
                 //   {
@@ -59,7 +74,7 @@ const Recharge = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Bank Name"
-            name={"bank_name"}
+            name={"rechargebank"}
             rules={
               [
                 //   {
@@ -99,7 +114,7 @@ const Recharge = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Recharge"
-            name={"minimum_recharge"}
+            name={"recharge_min"}
             rules={[
               //   {
               //     required: true,
@@ -117,7 +132,7 @@ const Recharge = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Recharge"
-            name={"maximum_recharge"}
+            name={"recharge_max"}
             rules={[
               //   {
               //     required: true,
@@ -135,7 +150,7 @@ const Recharge = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Recharge"
-            name={"fixed_recharge"}
+            name={"recharge_fix"}
             rules={[
               //   {
               //     required: true,

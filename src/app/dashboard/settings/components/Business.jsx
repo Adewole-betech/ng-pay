@@ -1,6 +1,6 @@
 import { Button, DatePicker, Form, Input, InputNumber, Select } from "antd";
 
-const BusinessInformation = () => {
+const BusinessInformation = ({ clientData }) => {
   const [businessForm] = Form.useForm();
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">

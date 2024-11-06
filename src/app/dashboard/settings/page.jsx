@@ -42,10 +42,10 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
-    if (payoutConf) {
+    if (payoutConf && payoutConf?.results) {
       setPayoutData(payoutConf?.results[0]);
     }
-    if (clientsList) {
+    if (clientsList && clientsList?.results) {
       setClientData(clientsList?.results[0]);
     }
   }, [payoutConf, clientsList]);
@@ -67,12 +67,14 @@ export default function Settings() {
             ]}
           />
           {tab === "profile" && <Profile userProfile={userLogin} />}
-          {tab === "information" && <BusinessInformation />}
+          {tab === "information" && (
+            <BusinessInformation clientData={clientData} />
+          )}
           {tab === "passwords" && <Passwords />}
           {tab === "teams" && <Teams />}
-          {tab === "payin" && <Payin />}
-          {tab === "payout" && <Payout />}
-          {tab === "recharge" && <Recharge />}
+          {tab === "payin" && <Payin payinConf={clientData} />}
+          {tab === "payout" && <Payout payoutConf={payoutData} />}
+          {tab === "recharge" && <Recharge payoutConf={payoutData} />}
         </div>
       </div>
     </div>

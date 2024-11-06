@@ -1,7 +1,19 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
+import { useEffect } from "react";
 
-const Payout = ({ selectedClient }) => {
+const Payout = ({ payoutConf }) => {
   const [payoutForm] = Form.useForm();
+
+  useEffect(() => {
+    if (payoutConf) {
+      payoutForm.setFieldsValue({
+        rate: payoutConf?.rate,
+        min: payoutConf?.min,
+        max: payoutConf?.max,
+        fix: payoutConf?.fix,
+      });
+    }
+  }, [payoutConf]);
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
       <div className="md:col-span-4 2xl:col-span-5 flex flex-col gap-0.5 md:gap-1">
@@ -20,7 +32,7 @@ const Payout = ({ selectedClient }) => {
         >
           <Form.Item
             label="Payout Rate"
-            name={"payout_rate"}
+            name={"rate"}
             rules={
               [
                 //   {
@@ -35,7 +47,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Minimum Payout"
-            name={"minimum_payout"}
+            name={"min"}
             rules={[
               //   {
               //     required: true,
@@ -53,7 +65,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Maximum Payout"
-            name={"maximum_payout"}
+            name={"max"}
             rules={[
               //   {
               //     required: true,
@@ -71,7 +83,7 @@ const Payout = ({ selectedClient }) => {
           </Form.Item>
           <Form.Item
             label="Fixed Payout"
-            name={"fixed_payout"}
+            name={"fix"}
             rules={[
               //   {
               //     required: true,

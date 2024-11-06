@@ -1,7 +1,21 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
+import { useEffect } from "react";
 
 const Payin = ({ selectedClient, setSelectedClient, setCurrentPage }) => {
   const [payinForm] = Form.useForm();
+
+  useEffect(() => {
+    if (selectedClient) {
+      payinForm.setFieldsValue({
+        rate: selectedClient?.rate,
+        min: selectedClient?.min,
+        max: selectedClient?.max,
+        fix: selectedClient?.fix,
+        prefergw: selectedClient?.prefergw,
+        settle_period: selectedClient?.settle_period ?? "T1",
+      });
+    }
+  }, [selectedClient]);
   return (
     <div className="flex flex-col gap-3 md:grid md:grid-cols-12">
       <div className="md:col-span-4 2xl:col-span-5 flex flex-col gap-0.5 md:gap-1">

@@ -26,7 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import store from "@/app/redux/store/store";
 import Column from "antd/es/table/Column";
-import { setTeamsColumns } from "@/app/redux/features/settings/teams";
+import { getTeams, setTeamsColumns } from "@/app/redux/features/settings/teams";
 import NewMember from "./NewMember";
 
 const Teams = () => {
@@ -35,7 +35,22 @@ const Teams = () => {
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
   const [showNew, setShowNew] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
 
+  const { userLogin } = useSelector(() => store.getState().login);
+  const { teamsColumns, teams, teamsLoading } = useSelector(
+    () => store.getState().teams
+  );
+
+  function loadData() {
+    dispatch(
+      getTeams({
+        page: page,
+        page_size: size,
+        mchid: userLogin?.mchid,
+      })
+    );
+  }
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -43,7 +58,7 @@ const Teams = () => {
         <Button
           icon={<ArrowLeft2 />}
           iconPosition="start"
-          loading={listLoading}
+          loading={teamsLoading}
           onClick={async () => {
             await setPage(page - 1);
           }}
@@ -59,7 +74,7 @@ const Teams = () => {
         <Button
           icon={<ArrowRight2 />}
           iconPosition="end"
-          loading={listLoading}
+          loading={teamsLoading}
           onClick={async () => {
             await setPage(page + 1);
           }}
@@ -82,8 +97,6 @@ const Teams = () => {
     }
     return originalElement;
   };
-
-  const { teamsColumns } = useSelector(() => store.getState().teams);
 
   const [dragIndex, setDragIndex] = useState({
     active: -1,
@@ -150,6 +163,17 @@ const Teams = () => {
     }
   }, [columns]);
 
+  useEffect(() => {
+    if (teams) {
+      setTotal(teams?.count);
+      setHistoryData(teams?.results);
+    }
+  }, [teams]);
+
+  useEffect(() => {
+    loadData();
+  }, [page, size]);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -184,7 +208,7 @@ const Teams = () => {
               <Table
                 className="no-scrollbar"
                 bordered
-                dataSource={teamsTable}
+                dataSource={historyData}
                 components={{
                   header: {
                     cell: TableHeaderCell,
@@ -197,7 +221,7 @@ const Teams = () => {
                 scroll={{
                   y: 800,
                 }}
-                // loading={loading}
+                loading={teamsLoading}
                 pagination={{
                   pageSize: size,
                   itemRender: itemRender,
@@ -252,12 +276,12 @@ const Teams = () => {
                         return (
                           <div className="flex items-center gap-2 lg:gap-3">
                             <Avatar src="" className="uppercase font-medium">
-                              {record?.name?.split(" ")[0].slice(0, 1)}
-                              {record?.name?.split(" ")[1].slice(0, 1)}
+                              {record?.username?.split(" ")[0].slice(0, 1)}
+                              {/* {record?.username?.split(" ")[1].slice(0, 1)} */}
                             </Avatar>
                             <div className="flex flex-col xl:gap-1">
                               <p className="font-medium text-xs lg:text-sm">
-                                {record?.name}
+                                {record?.username}
                               </p>
                               <p className="text-xs lg:text-sm">
                                 {record?.email}
@@ -265,15 +289,17 @@ const Teams = () => {
                             </div>
                           </div>
                         );
-                      } else if (column?.dataIndex === "role") {
+                      } else if (column?.dataIndex === "roles") {
                         return (
                           <p
                             className={`flex items-center justify-center rounded-s-full rounded-e-full font-medium py-1.5 px-3 capitalize w-fit ${
-                              value === "admin"
-                                ? "bg-[#F5F5FF] text-[#0408E7]"
-                                : value === "operator"
-                                ? "bg-[#FEF3F2] text-[#B42318]"
-                                : "bg-[#EFF8FF] text-[#175CD3]"
+                              value
+                                ? value === "admin"
+                                  ? "bg-[#F5F5FF] text-[#0408E7]"
+                                  : value === "operator"
+                                  ? "bg-[#FEF3F2] text-[#B42318]"
+                                  : "bg-[#EFF8FF] text-[#175CD3]"
+                                : ""
                             }`}
                           >
                             {value}
@@ -294,12 +320,13 @@ const Teams = () => {
                           </Space>
                         );
                       } else if (
-                        column?.dataIndex === "date_added" ||
+                        column?.dataIndex === "createtime" ||
                         column?.dataIndex === "last_active"
                       ) {
                         return (
                           <p className="capitalize">
-                            {dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
+                            {value &&
+                              dayjs(value, "YYYYMMDD").format("MMM D, YYYY")}
                           </p>
                         );
                       } else {
