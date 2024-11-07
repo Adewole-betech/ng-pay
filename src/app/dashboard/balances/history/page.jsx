@@ -63,6 +63,7 @@ import {
   setBalanceHistoryColumns,
 } from "@/app/redux/features/balance/history";
 import { PageContext } from "../../layout";
+import { getClientPayout, getClientsList } from "@/app/redux/features/clients";
 
 const { RangePicker } = DatePicker;
 
@@ -77,6 +78,8 @@ export default function History() {
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
   const [historyData, setHistoryData] = useState(null);
+  const [clientData, setClientData] = useState(null);
+  const [payoutData, setPayoutData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -88,6 +91,10 @@ export default function History() {
 
   let timeoutId;
 
+  const { userLogin } = useSelector(() => store.getState().login);
+  const { payoutConf, clientsList } = useSelector(
+    () => store.getState().client
+  );
   const { balanceHistoryColumns, historyLoading, balanceHistory } = useSelector(
     () => store.getState().balanceHistory
   );
@@ -113,7 +120,6 @@ export default function History() {
       })
     );
   }
-
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -222,6 +228,32 @@ export default function History() {
   const setDescription = useContext(PageContext);
 
   useEffect(() => {
+    dispatch(
+      getClientPayout({
+        page: 1,
+        page_size: 10,
+        mchid: userLogin?.mchid,
+      })
+    );
+    dispatch(
+      getClientsList({
+        page: 1,
+        page_size: 10,
+        mchid: userLogin?.mchid,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (payoutConf && payoutConf?.results) {
+      setPayoutData(payoutConf?.results[0]);
+    }
+    if (clientsList && clientsList?.results) {
+      setClientData(clientsList?.results[0]);
+    }
+  }, [payoutConf, clientsList]);
+
+  useEffect(() => {
     setDescription({ page: "", link: "", action: null });
   }, []);
 
@@ -263,7 +295,14 @@ export default function History() {
                 <div className="flex flex-col gap-2 text-neutral-50">
                   <p className="text-sm 2xl:text-base">Available Balance</p>
                   <p className="font-bold text-lg lg:text-xl 2xl:text-2xl font-geistSans">
-                    {showAvailable ? "₦3,000,000.00" : "*****"}
+                    {showAvailable
+                      ? `₦${
+                          clientData &&
+                          parseFloat(
+                            clientData?.availability?.toFixed(2)
+                          ).toLocaleString("en-us")
+                        }`
+                      : "*****"}
                   </p>
                 </div>
               </div>
@@ -287,12 +326,12 @@ export default function History() {
                   <Bank variant="linear" className="size-4 2xl:size-6" />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <p className="text-neutral-500 text-sm 2xl:text-base">
-                    NgPay Account Details
+                  <p className="text-neutral-500 text-sm 2xl:text-base capitalize">
+                    {clientData?.name} Account Details
                   </p>
                   <div className="flex items-center gap-1 lg:gap-2">
                     <p className="font-geistSans font-bold text-lg lg:text-xl 2xl:text-2xl">
-                      2597764401
+                      {payoutData?.rechargaccount}
                     </p>
                     <div className="py-1 px-3 bg-primary-main bg-opacity-5 text-primary-700 flex items-center gap-1 rounded-s-full rounded-e-full font-medium text-xs lg:text-sm">
                       <Briefcase className="size-3 lg:size-4" />

@@ -5,25 +5,68 @@ import { Eye, EyeSlash, Wallet3 } from "iconsax-react";
 import { useContext, useEffect, useState } from "react";
 import { chartdata } from "./data";
 import { DatePicker, Spin } from "antd";
-import ReactApexChart from "react-apexcharts";
+// import ReactApexChart from "react-apexcharts";
 import { PageContext } from "./layout";
+import { useDispatch, useSelector } from "react-redux";
+import store from "@/app/redux/store/store";
+import { getClientPayout, getClientsList } from "@/app/redux/features/clients";
+import Link from "next/link";
+import dynamic from "next/dynamic";
 
-const filters = [
-  { title: "Today", filter: "today" },
-  { title: "This Week", filter: "thisWeek" },
-  { title: "Last 7 days", filter: "last7" },
-  { title: "Last 30 days", filter: "last30" },
-  { title: "This Month", filter: "thisMonth" },
-  // { title: "custom", filter: "custom" },
-];
+const DynamicApexCharts = dynamic(() => import("react-apexcharts"), {
+  ssr: false, // Ensure ApexCharts is not imported during SSR
+});
 
-export default function Dashboard() {
+export default function Homeboard() {
+  const dispatch = useDispatch();
   const [filterSet, setFilter] = useState("today");
   const [showAvailable, setShowAvailable] = useState(true);
   const [showUnsettled, setShowUnsettled] = useState(true);
   const [showLast, setShowLast] = useState(true);
+  const [clientData, setClientData] = useState(null);
+  const [payoutData, setPayoutData] = useState(null);
 
   const setDescription = useContext(PageContext);
+
+  const { userLogin } = useSelector(() => store.getState().login);
+  const { payoutConf, clientsList } = useSelector(
+    () => store.getState().client
+  );
+
+  const filters = [
+    { title: "Today", filter: "today" },
+    { title: "This Week", filter: "thisWeek" },
+    { title: "Last 7 days", filter: "last7" },
+    { title: "Last 30 days", filter: "last30" },
+    { title: "This Month", filter: "thisMonth" },
+    // { title: "custom", filter: "custom" },
+  ];
+
+  useEffect(() => {
+    dispatch(
+      getClientPayout({
+        page: 1,
+        page_size: 10,
+        mchid: userLogin?.mchid,
+      })
+    );
+    dispatch(
+      getClientsList({
+        page: 1,
+        page_size: 10,
+        mchid: userLogin?.mchid,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
+    if (payoutConf && payoutConf?.results) {
+      setPayoutData(payoutConf?.results[0]);
+    }
+    if (clientsList && clientsList?.results) {
+      setClientData(clientsList?.results[0]);
+    }
+  }, [payoutConf, clientsList]);
 
   useEffect(() => {
     setDescription({ page: "", link: "", action: null });
@@ -40,7 +83,14 @@ export default function Dashboard() {
             <div className="flex flex-col gap-2 text-neutral-50">
               <p className="text-sm 2xl:text-base">Available Balance</p>
               <p className="font-bold text-lg lg:text-xl 2xl:text-2xl font-geistSans">
-                {showAvailable ? "₦3,000,000.00" : "*****"}
+                {showAvailable
+                  ? `₦${
+                      clientData &&
+                      parseFloat(
+                        clientData?.availability?.toFixed(2)
+                      ).toLocaleString("en-us")
+                    }`
+                  : "*****"}
               </p>
               <p className="text-sm 2xl:text-base mt-auto">
                 View Balance History
@@ -71,12 +121,22 @@ export default function Dashboard() {
                 Unsettled Balance
               </p>
               <p className="font-geistSans font-bold text-lg lg:text-xl 2xl:text-2xl">
-                {showUnsettled ? "₦39,000.00" : "*****"}
+                {showUnsettled
+                  ? `₦${
+                      clientData &&
+                      parseFloat(
+                        clientData?.balance?.toFixed(2)
+                      ).toLocaleString("en-us")
+                    }`
+                  : "*****"}
               </p>
 
-              <p className="text-primary-600 text-sm 2xl:text-base mt-auto">
+              <Link
+                href={"/dashboard/payments/history"}
+                className="text-primary-600 text-sm 2xl:text-base mt-auto"
+              >
                 View Payment History
-              </p>
+              </Link>
             </div>
           </div>
           {showUnsettled ? (
@@ -103,12 +163,15 @@ export default function Dashboard() {
                 Last Settlement
               </p>
               <p className="font-geistSans font-bold text-lg lg:text-xl 2xl:text-2xl">
-                {showLast ? "₦39,000.00" : "*****"}
+                {showLast ? "" : "*****"}
               </p>
 
-              <p className="text-primary-600 text-sm 2xl:text-base mt-auto">
-                View Payment History
-              </p>
+              <Link
+                href={"/dashboard/balances/history"}
+                className="text-primary-600 text-sm 2xl:text-base mt-auto"
+              >
+                View Settlements History
+              </Link>
             </div>
           </div>
           {showLast ? (
@@ -159,7 +222,7 @@ export default function Dashboard() {
               <div className="w-full overflow-x-auto">
                 <Spin spinning={false}>
                   <div id="chart" className="min-w-[40rem] overflow-hidden">
-                    <ReactApexChart
+                    <DynamicApexCharts
                       options={{
                         labels: chartdata?.map((usage) => usage?.date),
                         stroke: {
@@ -179,34 +242,6 @@ export default function Dashboard() {
                           position: "top",
                           horizontalAlign: "center",
                         },
-                        // yaxis: [
-                        //   {
-                        //     seriesName: "Volume",
-                        //     axisTicks: {
-                        //       show: true,
-                        //     },
-                        //     axisBorder: {
-                        //       show: true,
-                        //     },
-                        //     title: {
-                        //       text: "Columns",
-                        //     },
-                        //   },
-                        //   {
-                        //     opposite: true,
-                        //     seriesName: "Value",
-                        //     axisTicks: {
-                        //       show: true,
-                        //     },
-                        //     axisBorder: {
-                        //       show: true,
-                        //     },
-                        //     title: {
-                        //       text: "Percentage (for Rate)",
-                        //     },
-                        //     forceNiceScale: true,
-                        //   },
-                        // ],
                       }}
                       series={[
                         {
@@ -251,7 +286,7 @@ export default function Dashboard() {
               <div className="w-full overflow-x-auto">
                 <Spin spinning={false}>
                   <div id="chart" className="min-w-[40rem] overflow-hidden">
-                    <ReactApexChart
+                    <DynamicApexCharts
                       options={{
                         labels: chartdata?.map((usage) => usage?.date),
                         stroke: {
@@ -271,34 +306,6 @@ export default function Dashboard() {
                           position: "top",
                           horizontalAlign: "center",
                         },
-                        // yaxis: [
-                        //   {
-                        //     seriesName: "Volume",
-                        //     axisTicks: {
-                        //       show: true,
-                        //     },
-                        //     axisBorder: {
-                        //       show: true,
-                        //     },
-                        //     title: {
-                        //       text: "Columns",
-                        //     },
-                        //   },
-                        //   {
-                        //     opposite: true,
-                        //     seriesName: "Value",
-                        //     axisTicks: {
-                        //       show: true,
-                        //     },
-                        //     axisBorder: {
-                        //       show: true,
-                        //     },
-                        //     title: {
-                        //       text: "Percentage (for Rate)",
-                        //     },
-                        //     forceNiceScale: true,
-                        //   },
-                        // ],
                       }}
                       series={[
                         {
@@ -317,7 +324,7 @@ export default function Dashboard() {
                     />
                   </div>
                 </Spin>
-                {/* <div id="html-dist"></div> */}
+                <div id="html-dist"></div>
               </div>
               <div className="w-full lg:w-1/4 2xl:w-1/5 flex flex-col gap-4 2xl:gap-6">
                 <div className="flex flex-col">

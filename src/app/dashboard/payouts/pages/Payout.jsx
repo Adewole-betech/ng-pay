@@ -1,6 +1,15 @@
 import { CustomButton } from "@/app/components/button";
 import { MenuButton, MenuItem, Menu, FocusableItem } from "@szhsin/react-menu";
-import { Avatar, Button, Checkbox, Input, Space, Table, Tooltip } from "antd";
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Input,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import {
   ArrowLeft2,
   ArrowRight2,
@@ -50,6 +59,8 @@ import {
   setPayoutColumns,
 } from "@/app/redux/features/payout";
 import Filter from "../Filter";
+import { getClientsList } from "@/app/redux/features/clients";
+import { RiCloseLine } from "@remixicon/react";
 
 const Payout = ({ setCurrentPage }) => {
   const dispatch = useDispatch();
@@ -62,6 +73,7 @@ const Payout = ({ setCurrentPage }) => {
   const [showFilter, setShowFilter] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(false);
   const [historyData, setHistoryData] = useState(null);
+  const [clientData, setClientData] = useState(null);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -76,9 +88,11 @@ const Payout = ({ setCurrentPage }) => {
 
   let timeoutId;
 
+  const { userLogin } = useSelector(() => store.getState().login);
   const { payoutColumns, historyLoading, payoutHistory } = useSelector(
     () => store.getState().payout
   );
+  const { clientsList } = useSelector(() => store.getState().client);
 
   function loadData() {
     dispatch(
@@ -97,7 +111,6 @@ const Payout = ({ setCurrentPage }) => {
       })
     );
   }
-
 
   const itemRender = (pag, type, originalElement) => {
     if (type === "prev") {
@@ -209,6 +222,21 @@ const Payout = ({ setCurrentPage }) => {
   };
 
   useEffect(() => {
+    dispatch(
+      getClientsList({
+        page: 1,
+        page_size: 10,
+        mchid: userLogin?.mchid,
+      })
+    );
+  }, []);
+  useEffect(() => {
+    if (clientsList && clientsList?.results) {
+      setClientData(clientsList?.results[0]);
+    }
+  }, [clientsList]);
+
+  useEffect(() => {
     if (columns) {
       dispatch(setPayoutColumns({ columns: columns }));
     }
@@ -241,9 +269,16 @@ const Payout = ({ setCurrentPage }) => {
               <Wallet3 variant="linear" className="size-4 2xl:size-6" />
             </div>
             <div className="flex flex-col gap-2 text-neutral-50">
-              <p className="text-sm 2xl:text-base">Total Settlements</p>
+              <p className="text-sm 2xl:text-base">Available Balance</p>
               <p className="font-bold text-lg lg:text-xl 2xl:text-2xl font-geistSans">
-                {showAvailable ? "₦3,000,000.00" : "*****"}
+                {showAvailable
+                  ? `₦${
+                      clientData &&
+                      parseFloat(
+                        clientData?.availability?.toFixed(2)
+                      ).toLocaleString("en-us")
+                    }`
+                  : "*****"}
               </p>
             </div>
           </div>

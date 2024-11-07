@@ -24,6 +24,8 @@ import store from "../redux/store/store";
 
 export const PageContext = createContext(null);
 
+global?.window;
+
 export default function DashboardLayout({ children }) {
   const location = usePathname();
   const dispatch = useDispatch();
