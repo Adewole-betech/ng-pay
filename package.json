@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000 --host",
+    "dev": "next dev --port 3000 -H localhost",
     "build": "next build",
-    "start": "next start --port 3000 --host",
+    "start": "next start --port 3000",
     "lint": "next lint"
   },
   "dependencies": {
