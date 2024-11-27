@@ -4,6 +4,8 @@ import { axiosAuth } from "../api/axios";
 const initialState = {
   payoutHistory: [],
   historyLoading: false,
+  payoutsTrend: [],
+  trendLoading: false,
 
   payoutColumns: [
     {
@@ -71,6 +73,18 @@ export const getPayoutHistory = createAsyncThunk(
   }
 );
 
+export const getPayoutsTrend = createAsyncThunk(
+  "payout/getPayoutsTrend",
+  async ({ start_date = "", end_date = "" }) => {
+    return axiosAuth
+      .get(
+        `/api/payments/payout-history/Trend?end_date=${end_date}&start_date=${start_date}`
+      )
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
 const payoutSlice = createSlice({
   name: "payout",
   initialState,
@@ -111,6 +125,38 @@ const payoutSlice = createSlice({
         ...state,
         historyLoading: false,
         payoutHistory: [],
+      };
+    });
+    
+    builder.addCase(getPayoutsTrend.pending, (state) => {
+      return {
+        ...state,
+        trendLoading: true,
+      };
+    });
+    builder.addCase(getPayoutsTrend.fulfilled, (state, action) => {
+      console.log(action.payload)
+      if (Array.isArray(action.payload)) {
+        return {
+          ...state,
+          trendLoading: false,
+          payoutsTrend: action.payload,
+        };
+      } else {
+        toast.error(`Error fetching payouts trend`);
+        return {
+          ...state,
+          trendLoading: false,
+          payoutsTrend: [],
+        };
+      }
+    });
+    builder.addCase(getPayoutsTrend.rejected, (state, action) => {
+      toast.error(action.error.message);
+      return {
+        ...state,
+        trendLoading: false,
+        payoutsTrend: [],
       };
     });
   },

@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 const initialState = {
   paymentsHistory: [],
   historyLoading: false,
+  paymentsTrend: [],
+  trendLoading: false,
 
   paymentHistoryColumns: [
     {
@@ -87,6 +89,18 @@ export const getPaymentsHistory = createAsyncThunk(
   }
 );
 
+export const getPaymentsTrend = createAsyncThunk(
+  "paymentHistory/getPaymentsTrend",
+  async ({ start_date = "", end_date = "" }) => {
+    return axiosAuth
+      .get(
+        `/api/payments/transaction-history/Trend?end_date=${end_date}&start_date=${start_date}`
+      )
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
 const historySlice = createSlice({
   name: "paymentHistory",
   initialState,
@@ -127,6 +141,38 @@ const historySlice = createSlice({
         ...state,
         historyLoading: false,
         paymentsHistory: [],
+      };
+    });
+
+    builder.addCase(getPaymentsTrend.pending, (state) => {
+      return {
+        ...state,
+        trendLoading: true,
+      };
+    });
+    builder.addCase(getPaymentsTrend.fulfilled, (state, action) => {
+      console.log(action.payload)
+      if (Array.isArray(action.payload)) {
+        return {
+          ...state,
+          trendLoading: false,
+          paymentsTrend: action.payload,
+        };
+      } else {
+        toast.error(`Error fetching payments trend`);
+        return {
+          ...state,
+          trendLoading: false,
+          paymentsTrend: [],
+        };
+      }
+    });
+    builder.addCase(getPaymentsTrend.rejected, (state, action) => {
+      toast.error(action.error.message);
+      return {
+        ...state,
+        trendLoading: false,
+        paymentsTrend: [],
       };
     });
   },
